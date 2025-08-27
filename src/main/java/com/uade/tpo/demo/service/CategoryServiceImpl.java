@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.uade.tpo.demo.entity.Category;
 import com.uade.tpo.demo.exceptions.CategoryDuplicateException;
@@ -26,10 +27,13 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(categoryId);
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public Category createCategory(String description) throws CategoryDuplicateException {
         List<Category> categories = categoryRepository.findByDescription(description);
-        if (categories.isEmpty())
-            return categoryRepository.save(new Category(description));
+        if (categories.isEmpty()) {
+            categoryRepository.save(new Category(description));
+        }
+
         throw new CategoryDuplicateException();
     }
 }
