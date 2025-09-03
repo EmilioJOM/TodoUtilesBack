@@ -19,6 +19,9 @@ public class Product {
     @Column
     private String description;
 
+    @Column
+    private double price;
+
     @OneToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
