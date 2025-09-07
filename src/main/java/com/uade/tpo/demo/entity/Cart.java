@@ -1,34 +1,33 @@
 package com.uade.tpo.demo.entity;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Data;
-
-@Data
 @Entity
+@Data
+@Table(name = "carts")
 public class Cart {
-   
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column
-    private List<CartProducts> products;
 
     @Column
+    private boolean state; // true = activo, false = comprado
+
+    @Column
+    private double subtotal = 0;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column
-    private double subTotal;
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartProducts> cartProducts = new ArrayList<>();
 
-    @Column
-    private boolean state;
-
+    public Cart() {}
 }
 
 
