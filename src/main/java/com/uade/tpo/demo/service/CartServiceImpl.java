@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,16 +23,18 @@ public class CartServiceImpl implements CartService {
     private ProductRepository productRepository;
 
     @Override
-    public Cart getOrCreateActiveCart(User user) {
-        return cartRepository.findByUserAndStateTrue(user)
-                .orElseGet(() -> {
-                    Cart newCart = new Cart();
-                    newCart.setUser(user);
-                    newCart.setState(true);
-                    newCart.setSubtotal(0);
-                    return cartRepository.save(newCart);
-                });
-    }
+public Cart getOrCreateActiveCart(User user) {
+    return cartRepository.findActiveCart(user.getId())
+            .orElseGet(() -> {
+                Cart newCart = new Cart();
+                newCart.setUser(user);
+                newCart.setState(true);
+                newCart.setSubtotal(0.0); 
+                newCart.setCartProducts(new ArrayList<>()); 
+                return cartRepository.save(newCart);
+            });
+}
+
 
     @Override
     public List<Product> getProductsFromActiveCart(User user) {
