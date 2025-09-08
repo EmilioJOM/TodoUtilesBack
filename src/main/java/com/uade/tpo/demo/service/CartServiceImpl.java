@@ -122,13 +122,13 @@ public Cart getOrCreateActiveCart(User user) {
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public Cart purchaseCart(User user) throws EmptyCartException {
-        Cart cart = getOrCreateActiveCart(user);
+         Cart cart = getOrCreateActiveCart(user);
 
         if (cart.getCartProducts() == null || cart.getCartProducts().isEmpty()) {
             throw new EmptyCartException();
         }
 
-        // 🔎 Verificar stock actualizado
+    
         Map<String, Integer> insufficientStock = new HashMap<>();
         for (CartProducts cp : cart.getCartProducts()) {
             Product product = productRepository.findById(cp.getProduct().getId())
@@ -143,19 +143,19 @@ public Cart getOrCreateActiveCart(User user) {
             throw new InsufficientStockException(insufficientStock);
         }
 
-        // ✅ Descontar stock
+    
         for (CartProducts cp : cart.getCartProducts()) {
             Product product = cp.getProduct();
             product.setStock(product.getStock() - cp.getQuantity());
             productRepository.save(product);
         }
 
-        // ✅ Cambiar estado a inactivo
+    
         cart.setState(false);
         updateCartSubtotal(cart);
         cartRepository.save(cart);
 
-        // ✅ Crear nuevo carrito vacío
+    
         Cart newCart = new Cart();
         newCart.setUser(user);
         newCart.setState(true);
@@ -176,5 +176,5 @@ public Cart getOrCreateActiveCart(User user) {
                 .mapToDouble(cp -> cp.getProduct().getPrice() * cp.getQuantity())
                 .sum();
         cart.setSubtotal(subtotal);
-    }
+    } 
 }
