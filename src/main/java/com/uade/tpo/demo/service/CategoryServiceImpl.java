@@ -48,6 +48,4 @@ public class CategoryServiceImpl implements CategoryService {
         return true;
     }
 
-    throw new CategoryDuplicateException();
-}
 }
