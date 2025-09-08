@@ -119,49 +119,49 @@ public Cart getOrCreateActiveCart(User user) {
         return cart;
     }
 
-@Override
-@Transactional(rollbackFor = Throwable.class)
-public Cart purchaseCart(User user) throws EmptyCartException {
-    Cart cart = getOrCreateActiveCart(user);
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public Cart purchaseCart(User user) throws EmptyCartException {
+        Cart cart = getOrCreateActiveCart(user);
 
-    if (cart.getCartProducts() == null || cart.getCartProducts().isEmpty()) {
-        throw new EmptyCartException();
-    }
-
-    // 🔎 Verificar stock actualizado
-    Map<String, Integer> insufficientStock = new HashMap<>();
-    for (CartProducts cp : cart.getCartProducts()) {
-        Product product = productRepository.findById(cp.getProduct().getId())
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
-        if (cp.getQuantity() > product.getStock()) {
-            insufficientStock.put(product.getDescription(), product.getStock());
+        if (cart.getCartProducts() == null || cart.getCartProducts().isEmpty()) {
+            throw new EmptyCartException();
         }
+
+        // 🔎 Verificar stock actualizado
+        Map<String, Integer> insufficientStock = new HashMap<>();
+        for (CartProducts cp : cart.getCartProducts()) {
+            Product product = productRepository.findById(cp.getProduct().getId())
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+            if (cp.getQuantity() > product.getStock()) {
+                insufficientStock.put(product.getDescription(), product.getStock());
+            }
+        }
+
+        if (!insufficientStock.isEmpty()) {
+            throw new InsufficientStockException(insufficientStock);
+        }
+
+        // ✅ Descontar stock
+        for (CartProducts cp : cart.getCartProducts()) {
+            Product product = cp.getProduct();
+            product.setStock(product.getStock() - cp.getQuantity());
+            productRepository.save(product);
+        }
+
+        // ✅ Cambiar estado a inactivo
+        cart.setState(false);
+        updateCartSubtotal(cart);
+        cartRepository.save(cart);
+
+        // ✅ Crear nuevo carrito vacío
+        Cart newCart = new Cart();
+        newCart.setUser(user);
+        newCart.setState(true);
+        newCart.setSubtotal(0);
+        return cartRepository.save(newCart);
     }
-
-    if (!insufficientStock.isEmpty()) {
-        throw new InsufficientStockException(insufficientStock);
-    }
-
-    // ✅ Descontar stock
-    for (CartProducts cp : cart.getCartProducts()) {
-        Product product = cp.getProduct();
-        product.setStock(product.getStock() - cp.getQuantity());
-        productRepository.save(product);
-    }
-
-    // ✅ Cambiar estado a inactivo
-    cart.setState(false);
-    updateCartSubtotal(cart);
-    cartRepository.save(cart);
-
-    // ✅ Crear nuevo carrito vacío
-    Cart newCart = new Cart();
-    newCart.setUser(user);
-    newCart.setState(true);
-    newCart.setSubtotal(0);
-    return cartRepository.save(newCart);
-}
 
 
     public List<CartProducts> getActiveCartProducts(User user) {
