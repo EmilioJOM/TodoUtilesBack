@@ -7,6 +7,7 @@ import com.uade.tpo.demo.entity.CartProducts;
 import com.uade.tpo.demo.entity.dto.CartResponseDTO;
 import com.uade.tpo.demo.entity.dto.CartProductResponseDTO;
 import com.uade.tpo.demo.entity.dto.MessageResponseDTO;
+import com.uade.tpo.demo.exceptions.EmptyCartException;
 import com.uade.tpo.demo.repository.UserRepository;
 import com.uade.tpo.demo.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +116,7 @@ public class CartController {
 
     // Comprar el carrito
     @PostMapping("/purchase")
-    public ResponseEntity<MessageResponseDTO> purchaseCart(@RequestParam Long userId) {
+    public ResponseEntity<MessageResponseDTO> purchaseCart(@RequestParam Long userId) throws EmptyCartException {
         User user = getUserById(userId);
         cartService.purchaseCart(user);
         return ResponseEntity.ok(new MessageResponseDTO("Se confirmó el carrito de compras correctamente"));

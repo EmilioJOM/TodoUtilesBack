@@ -13,6 +13,12 @@ import com.uade.tpo.demo.entity.Product;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
+
+
+    @Query("SELECT c FROM Category c WHERE c.description = :categoryDescription")
+    List<Category> findCategoryByDescription(@Param("categoryDescription") String categoryDescription);
+
+
     @Query("SELECT p FROM Product p JOIN p.categories c WHERE c.description = :categoryDescription")
     List<Product> findByDescription(@Param("categoryDescription") String categoryDescription);
 }

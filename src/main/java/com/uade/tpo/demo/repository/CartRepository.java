@@ -1,8 +1,6 @@
 package com.uade.tpo.demo.repository;
 
 import com.uade.tpo.demo.entity.Cart;
-import com.uade.tpo.demo.entity.Product;
-import com.uade.tpo.demo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;

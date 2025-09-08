@@ -28,13 +28,14 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(categoryId);
     }
 
-    @Transactional(rollbackFor = Throwable.class)
-    public Category createCategory(String description) throws CategoryDuplicateException {
-        List<Product> categories = categoryRepository.findByDescription(description);
-        if (categories.isEmpty()) {
-            categoryRepository.save(new Category(description));
-        }
+@Transactional(rollbackFor = Throwable.class)
+public Category createCategory(String description) throws CategoryDuplicateException {
+    List<Category> categories = categoryRepository.findCategoryByDescription(description);
 
-        throw new CategoryDuplicateException();
+    if (categories.isEmpty()) {
+        return categoryRepository.save(new Category(description));
     }
+
+    throw new CategoryDuplicateException();
+}
 }

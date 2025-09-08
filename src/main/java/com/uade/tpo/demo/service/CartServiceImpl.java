@@ -1,13 +1,17 @@
 package com.uade.tpo.demo.service;
 
 import com.uade.tpo.demo.entity.*;
+import com.uade.tpo.demo.exceptions.EmptyCartException;
+import com.uade.tpo.demo.exceptions.InsufficientStockException;
 import com.uade.tpo.demo.repository.*;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +51,7 @@ public Cart getOrCreateActiveCart(User user) {
     @Override
     @Transactional
     public Cart addProductToCart(User user, Long productId, int quantity) {
+        if (quantity < 0) throw new RuntimeException("Cantidad inválida");
         Cart cart = getOrCreateActiveCart(user);
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
@@ -114,28 +119,56 @@ public Cart getOrCreateActiveCart(User user) {
         return cart;
     }
 
-    @Override
-    @Transactional
-    public Cart purchaseCart(User user) {
-        Cart cart = getOrCreateActiveCart(user);
+@Override
+@Transactional(rollbackFor = Throwable.class)
+public Cart purchaseCart(User user) throws EmptyCartException {
+    Cart cart = getOrCreateActiveCart(user);
 
-        // Cambiar estado a inactivo
-        cart.setState(false);
-        updateCartSubtotal(cart); // opcional, mantiene el subtotal final
-        cartRepository.save(cart);
-
-        // Crear nuevo carrito vacío
-        Cart newCart = new Cart();
-        newCart.setUser(user);
-        newCart.setState(true);
-        newCart.setSubtotal(0);
-        return cartRepository.save(newCart);
+    if (cart.getCartProducts() == null || cart.getCartProducts().isEmpty()) {
+        throw new EmptyCartException();
     }
+
+    // 🔎 Verificar stock actualizado
+    Map<String, Integer> insufficientStock = new HashMap<>();
+    for (CartProducts cp : cart.getCartProducts()) {
+        Product product = productRepository.findById(cp.getProduct().getId())
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        if (cp.getQuantity() > product.getStock()) {
+            insufficientStock.put(product.getDescription(), product.getStock());
+        }
+    }
+
+    if (!insufficientStock.isEmpty()) {
+        throw new InsufficientStockException(insufficientStock);
+    }
+
+    // ✅ Descontar stock
+    for (CartProducts cp : cart.getCartProducts()) {
+        Product product = cp.getProduct();
+        product.setStock(product.getStock() - cp.getQuantity());
+        productRepository.save(product);
+    }
+
+    // ✅ Cambiar estado a inactivo
+    cart.setState(false);
+    updateCartSubtotal(cart);
+    cartRepository.save(cart);
+
+    // ✅ Crear nuevo carrito vacío
+    Cart newCart = new Cart();
+    newCart.setUser(user);
+    newCart.setState(true);
+    newCart.setSubtotal(0);
+    return cartRepository.save(newCart);
+}
+
 
     public List<CartProducts> getActiveCartProducts(User user) {
         Cart cart = getOrCreateActiveCart(user);
         return cart.getCartProducts();
     }
+
     // Método privado para actualizar el subtotal
     
     private void updateCartSubtotal(Cart cart) {
