@@ -23,20 +23,17 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<Product> getProductsByDescription(String q) {
-        if (q == null || q.isBlank())
-            return Collections.emptyList();
+        if (q == null || q.isBlank()) return Collections.emptyList();
         return productRepository.findByDescriptionContainingIgnoreCase(q);
     }
 
     @Override
     public List<Product> getProductsByCategory(String category) {
-        if (category == null || category.isBlank())
-            return Collections.emptyList();
+        if (category == null || category.isBlank()) return Collections.emptyList();
         try {
             Long id = Long.valueOf(category);
             return productRepository.findByCategories_Id(id);
         } catch (NumberFormatException e) {
-            // si el string no es número, devolvemos vacío
             return Collections.emptyList();
         }
     }
