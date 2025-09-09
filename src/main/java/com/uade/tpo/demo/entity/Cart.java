@@ -5,6 +5,8 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 @Entity
 @Data
 @Table(name = "carts")
@@ -15,7 +17,7 @@ public class Cart {
     private Long id;
 
     @Column
-    private boolean state; // true = activo, false = comprado
+    private String state; // valores posibles: "ACTIVE", "PENDING", "PURCHASED", "CANCELLED"
 
     @Column
     private double subtotal = 0;

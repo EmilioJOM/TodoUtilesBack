@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,17 +28,17 @@ public class CartServiceImpl implements CartService {
     private ProductRepository productRepository;
 
     @Override
-public Cart getOrCreateActiveCart(User user) {
-    return cartRepository.findActiveCart(user.getId())
-            .orElseGet(() -> {
-                Cart newCart = new Cart();
-                newCart.setUser(user);
-                newCart.setState(true);
-                newCart.setSubtotal(0.0); 
-                newCart.setCartProducts(new ArrayList<>()); 
-                return cartRepository.save(newCart);
-            });
-}
+    public Cart getOrCreateActiveCart(User user) {
+        return cartRepository.findActiveCart(user.getId())
+                .orElseGet(() -> {
+                    Cart newCart = new Cart();
+                    newCart.setUser(user);
+                    newCart.setState("ACTIVE");
+                    newCart.setSubtotal(0.0); 
+                    newCart.setCartProducts(new ArrayList<>()); 
+                    return cartRepository.save(newCart);
+                });
+    }
 
 
     @Override
@@ -122,7 +123,13 @@ public Cart getOrCreateActiveCart(User user) {
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public Cart purchaseCart(User user) throws EmptyCartException {
-         Cart cart = getOrCreateActiveCart(user);
+        Cart cart = getOrCreateActiveCart(user);
+
+        //   Verificar si el usuario tiene un carrito en estado PENDING
+        Optional<Cart> pendingCart = cartRepository.findPendingCartByUser(user.getId());
+        if (pendingCart.isPresent()) {
+            throw new RuntimeException("No se puede confirmar el carrito: el usuario tiene una compra pendiente por finalizar");
+        }
 
         if (cart.getCartProducts() == null || cart.getCartProducts().isEmpty()) {
             throw new EmptyCartException();
@@ -151,14 +158,14 @@ public Cart getOrCreateActiveCart(User user) {
         }
 
     
-        cart.setState(false);
+        cart.setState("PENDING");
         updateCartSubtotal(cart);
         cartRepository.save(cart);
 
     
         Cart newCart = new Cart();
         newCart.setUser(user);
-        newCart.setState(true);
+        newCart.setState("ACTIVE");
         newCart.setSubtotal(0);
         return cartRepository.save(newCart);
     }

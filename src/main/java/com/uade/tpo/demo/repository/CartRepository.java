@@ -15,12 +15,14 @@ import java.util.Optional;
 
 public interface CartRepository extends JpaRepository<Cart, Long> {
     
-    @Query("SELECT c FROM Cart c WHERE c.user.id = :userId AND c.state = true")
+    @Query("SELECT c FROM Cart c WHERE c.user.id = :userId AND c.state = 'ACTIVE'")
     Optional<Cart> findActiveCart(@Param("userId") Long userId);
 
-    @Query("SELECT c FROM Cart c LEFT JOIN FETCH c.cartProducts WHERE c.user.id = :userId AND c.state = true")
+    @Query("SELECT c FROM Cart c LEFT JOIN FETCH c.cartProducts WHERE c.user.id = :userId AND c.state = 'ACTIVE'")
     Optional<Cart> findByUserIdAndStateTrueWithProducts(@Param("userId") Long userId);
 
+    @Query("SELECT c FROM Cart c WHERE c.user.id = :userId AND c.state = 'PENDING'")
+    Optional<Cart> findPendingCartByUser(@Param("userId") Long userId);
 
 }
 
