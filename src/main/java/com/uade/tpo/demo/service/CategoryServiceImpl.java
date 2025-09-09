@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.uade.tpo.demo.entity.Category;
+import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.exceptions.CategoryDuplicateException;
 import com.uade.tpo.demo.repository.CategoryRepository;
 
@@ -46,4 +47,5 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return true;
     }
+
 }
