@@ -20,10 +20,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.price <= :price")
     List<Product> findByPrice(@Param("price") Double price);
 
-    //filtra por Categoria
+    //filtra por categoria
     @Query("SELECT p FROM Product p WHERE p.category = :category")
     List<Product> findByCategory(@Param("category") String category);
 
-
+    // filtra por categoria y precio
+    @Query("SELECT p FROM Product p WHERE p.category = :category AND p.price <= :price")
+    List<Product> findByCategoryPrice(@Param("category") String category ,@Param("price") Double price);
 
 }
