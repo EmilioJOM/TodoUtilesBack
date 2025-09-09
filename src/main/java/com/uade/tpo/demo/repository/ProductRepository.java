@@ -1,29 +1,18 @@
 package com.uade.tpo.demo.repository;
 
-import org.springframework.stereotype.Repository;
+import com.uade.tpo.demo.entity.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import com.uade.tpo.demo.entity.Product;
-
-@Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    //Filtra por descripcion
-    @Query("SELECT p FROM Product p WHERE p.description = :description")
-    List<Product> findByDescription(@Param("description") String description);
+    // Precio <= X
+    List<Product> findByPriceLessThanEqual(double price);
 
-    //filtra por precio
-    @Query("SELECT p FROM Product p WHERE p.price <= :price")
-    List<Product> findByPrice(@Param("price") Double price);
+    // Descripción contiene (ignora mayúsculas/minúsculas)
+    List<Product> findByDescriptionContainingIgnoreCase(String description);
 
-    //filtra por Categoria
-    @Query("SELECT p FROM Product p WHERE p.category = :category")
-    List<Product> findByCategory(@Param("category") String category);
-
-
-
+    // Por ID de categoría (relación ManyToMany Product.categories)
+    List<Product> findByCategories_Id(Long categoryId);
 }

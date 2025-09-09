@@ -1,17 +1,15 @@
 package com.uade.tpo.demo.service;
 
-import java.util.List;
-
-//import com.uade.tpo.demo.entity.Category;
 import com.uade.tpo.demo.entity.Product;
+import java.util.List;
 
 public interface SearchService {
 
-    public List<Product> getProductsByPrice(double price);
+    // Coinciden con lo que espera SearchController
+    List<Product> getProductsByPrice(double price);
 
-    public List<Product> getProductsByDescription(String description);
+    List<Product> getProductsByDescription(String q);
 
-    //La idea seria que le pase la descripcion de la categoria pero esta sujeto a cambios supongo
-    public List<Product> getProductsByCategory(String category);
-    
+    // En el controller viene como String: lo convertimos a ID
+    List<Product> getProductsByCategory(String category);
 }

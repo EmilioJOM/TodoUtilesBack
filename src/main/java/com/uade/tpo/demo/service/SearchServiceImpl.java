@@ -1,31 +1,43 @@
 package com.uade.tpo.demo.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.repository.ProductRepository;
+import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class SearchServiceImpl implements SearchService {
-    
-    @Autowired
-    private ProductRepository productRepository;
 
-    public List<Product> getProductsByPrice(double price){
-        return productRepository.findByPrice(price);
+    private final ProductRepository productRepository;
+
+    public SearchServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
-    public List<Product> getProductsByDescription(String description){
-        return productRepository.findByDescription(description);
+    @Override
+    public List<Product> getProductsByPrice(double price) {
+        return productRepository.findByPriceLessThanEqual(price);
     }
 
-    public List<Product> getProductsByCategory(String category){
-        return productRepository.findByCategory(category);
-
+    @Override
+    public List<Product> getProductsByDescription(String q) {
+        if (q == null || q.isBlank())
+            return Collections.emptyList();
+        return productRepository.findByDescriptionContainingIgnoreCase(q);
     }
-    
+
+    @Override
+    public List<Product> getProductsByCategory(String category) {
+        if (category == null || category.isBlank())
+            return Collections.emptyList();
+        try {
+            Long id = Long.valueOf(category);
+            return productRepository.findByCategories_Id(id);
+        } catch (NumberFormatException e) {
+            // si el string no es número, devolvemos vacío
+            return Collections.emptyList();
+        }
+    }
 }
