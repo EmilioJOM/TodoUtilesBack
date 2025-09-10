@@ -32,6 +32,11 @@ public class VentaController {
                             @RequestParam Double total,
                             @RequestParam String metodoPago,
                             @RequestParam(required = false) Long idCupon) {
-        return ventaService.crearVenta(idUsuario, total, metodoPago, idCupon);
+        Venta venta = new Venta();
+        venta.setIdUsuario(idUsuario);
+        venta.setTotal(total);
+        venta.setMetodoPago(metodoPago);
+        venta.setIdCupon(idCupon);
+        return ventaService.crearVenta(venta);
     }
 }
