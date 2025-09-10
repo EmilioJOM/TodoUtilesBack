@@ -5,7 +5,9 @@ import com.uade.tpo.demo.exceptions.CategoryNonexistentException;
 import com.uade.tpo.demo.service.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -73,5 +75,13 @@ public class ProductController {
         return productService.obtainProduct(id);
     }
 
-
+    @PostMapping("/{id}/imagen")
+    public ResponseEntity<Product> subirImagen(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        System.out.println("POST: api/productos/" + id + "/imagen");
+        Product actualizado = productService.subirImagen(id, file);
+        return ResponseEntity.ok(actualizado);
+    }
 }

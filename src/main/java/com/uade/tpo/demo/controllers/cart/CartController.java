@@ -12,6 +12,7 @@ import com.uade.tpo.demo.repository.UserRepository;
 import com.uade.tpo.demo.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -28,16 +29,11 @@ public class CartController {
     @Autowired
     private UserRepository userRepository;
 
-    private User getUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-    }
 
     // Obtener o crear el carrito activo
     @GetMapping("/cart")
-    public ResponseEntity<CartResponseDTO> getOrCreateActiveCart(@RequestParam Long userId) {
+    public ResponseEntity<CartResponseDTO> getOrCreateActiveCart(@AuthenticationPrincipal User user) {
         System.out.println("GET: carts/cart");
-        User user = getUserById(userId);
         Cart cart = cartService.getOrCreateActiveCart(user);
 
         CartResponseDTO response = new CartResponseDTO(
@@ -53,9 +49,8 @@ public class CartController {
 
     // Obtener productos del carrito activo
     @GetMapping("/products")
-    public ResponseEntity<List<CartProductResponseDTO>> getCartProducts(@RequestParam Long userId) {
+    public ResponseEntity<List<CartProductResponseDTO>> getCartProducts(@AuthenticationPrincipal User user) {
         System.out.println("GET: carts/products");
-        User user = getUserById(userId);
         List<CartProducts> cartProducts = cartService.getActiveCartProducts(user);
 
         if (cartProducts.isEmpty()) {
@@ -74,12 +69,11 @@ public class CartController {
 
     // Agregar producto al carrito
     @PostMapping("/add/{productId}")
-    public ResponseEntity<MessageResponseDTO> addProduct(@RequestParam Long userId,
+    public ResponseEntity<MessageResponseDTO> addProduct(@AuthenticationPrincipal User user,
                                                          @PathVariable Long productId,
                                                          @RequestParam int quantity) {
         System.out.println("GET: carts/add/"+productId.toString());
         try {
-            User user = getUserById(userId);
             cartService.addProductToCart(user, productId, quantity);
             return ResponseEntity.created(URI.create("/carts/cart"))
                     .body(new MessageResponseDTO("Producto agregado correctamente"));
@@ -91,12 +85,11 @@ public class CartController {
 
     // Editar cantidad de un producto en el carrito
     @PutMapping("/update/{productId}")
-    public ResponseEntity<MessageResponseDTO> updateProduct(@RequestParam Long userId,
+    public ResponseEntity<MessageResponseDTO> updateProduct(@AuthenticationPrincipal User user,
                                                             @PathVariable Long productId,
                                                             @RequestParam int quantity) {
         System.out.println("PUT: carts/update/"+productId.toString());
         try {
-            User user = getUserById(userId);
             cartService.updateProductQuantity(user, productId, quantity);
             return ResponseEntity.ok(new MessageResponseDTO("Carrito actualizado correctamente"));
         } catch (Exception e) {
@@ -107,10 +100,9 @@ public class CartController {
 
     // Quitar un producto del carrito
     @DeleteMapping("/remove/{productId}")
-    public ResponseEntity<MessageResponseDTO> removeProduct(@RequestParam Long userId,
+    public ResponseEntity<MessageResponseDTO> removeProduct(@AuthenticationPrincipal User user,
                                                             @PathVariable Long productId) {
         System.out.println("DELETE: carts/remove/"+productId.toString());
-        User user = getUserById(userId);
         try {
             cartService.removeProductFromCart(user, productId);
             return ResponseEntity.ok(new MessageResponseDTO("El producto fue eliminado del carrito correctamente"));
@@ -121,9 +113,8 @@ public class CartController {
 
     // Comprar el carrito
     @PostMapping("/purchase")
-    public ResponseEntity<MessageResponseDTO> purchaseCart(@RequestParam Long userId) throws EmptyCartException {
+    public ResponseEntity<MessageResponseDTO> purchaseCart(@AuthenticationPrincipal User user) throws EmptyCartException {
         System.out.println("POST: carts/purchase");
-        User user = getUserById(userId);
         cartService.purchaseCart(user);
         return ResponseEntity.ok(new MessageResponseDTO("Se confirmó el carrito de compras correctamente"));
     }

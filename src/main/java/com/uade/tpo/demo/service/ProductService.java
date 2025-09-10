@@ -2,6 +2,7 @@ package com.uade.tpo.demo.service;
 
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.exceptions.CategoryNonexistentException;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
     
@@ -22,5 +23,5 @@ public interface ProductService {
     public Product changePrice(long id, double price);
 
 
-
+    Product subirImagen(Long id, MultipartFile file);
 }

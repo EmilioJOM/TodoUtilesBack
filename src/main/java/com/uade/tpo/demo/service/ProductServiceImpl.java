@@ -9,6 +9,7 @@ import com.uade.tpo.demo.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,6 +20,8 @@ public class ProductServiceImpl implements ProductService{
     private ProductRepository productRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private GuardarImagenes guardarImagenes;
 
     public Product obtainProduct(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
@@ -37,6 +40,33 @@ public class ProductServiceImpl implements ProductService{
         Product auxProd= obtainProduct(id);
         auxProd.setPrice(price);
         return productRepository.save(auxProd);
+    }
+
+    @Override
+    public Product subirImagen(Long id, MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("El archivo de imagen es obligatorio");
+        }
+
+        // Validaciones simples de tipo (opcional)
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("El archivo debe ser una imagen");
+        }
+
+        Product producto = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        // Guardar archivo físicamente y obtener URL pública
+        String url = guardarImagenes.guardarArchivo(
+                file,
+                "productos",           // carpeta
+                "producto_" + id       // prefijo del nombre
+        );
+
+        // Persistir URL en el producto
+        producto.setImagen(url);
+        return productRepository.save(producto);
     }
 
 

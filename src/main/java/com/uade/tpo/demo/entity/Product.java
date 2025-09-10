@@ -38,6 +38,8 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories = new ArrayList<>();
+    @Column
+    private String imagen;
 
 
     public void addCategory(Category category){
@@ -47,4 +49,6 @@ public class Product {
     public void deleteCategory(Category category){
         this.categories.remove(category);
     }
+
+
 }
