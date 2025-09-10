@@ -22,7 +22,6 @@ public class Product {
     @Column
     private double price;
 
-    // ÚNICA relación de categorías
     @ManyToMany
     @JoinTable(
             name = "product_category",

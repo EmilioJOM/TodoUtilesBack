@@ -31,7 +31,7 @@ public class SearchServiceImpl implements SearchService {
     public List<Product> getProductsByCategory(String category) {
         if (category == null || category.isBlank()) return Collections.emptyList();
         try {
-            Long id = Long.valueOf(category);
+            Long id = Long.valueOf(category);            // esperamos ID como String
             return productRepository.findByCategories_Id(id);
         } catch (NumberFormatException e) {
             // si no es número, devolvemos vacío
@@ -39,3 +39,4 @@ public class SearchServiceImpl implements SearchService {
         }
     }
 }
+

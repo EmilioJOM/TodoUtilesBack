@@ -6,11 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-
     // Precio <= X
     List<Product> findByPriceLessThanEqual(double price);
 
-    // Descripción contiene (ignora mayúsculas/minúsculas)
+    // Descripción contiene (case-insensitive)
     List<Product> findByDescriptionContainingIgnoreCase(String description);
 
     // Por ID de categoría (relación ManyToMany Product.categories)

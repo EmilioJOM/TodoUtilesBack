@@ -9,4 +9,3 @@ public interface SearchService {
     // en el controller llega como String; lo convertimos a id si es número
     List<Product> getProductsByCategory(String category);
 }
-
