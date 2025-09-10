@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,26 +21,25 @@ public class SearchController {
     private SearchService searchService;
 
     @GetMapping("precio/{productPrice}")
-    public List<Product> getProductsByPrice(double price) throws NoSearchResultsException{
+    public List<Product> getProductsByPrice(@PathVariable("productPrice") double price) throws NoSearchResultsException {
         return searchService.getProductsByPrice(price);
     }
 
     @GetMapping("producto/{productDescription}")
-    public List<Product> getProductsByDescription(String description) throws NoSearchResultsException{
+    public List<Product> getProductsByDescription(@PathVariable("productDescription") String description) throws NoSearchResultsException {
         return searchService.getProductsByDescription(description);
     }
 
     //La idea seria que le pase la descripcion de la categoria pero esta sujeto a cambios supongo
     @GetMapping("category/{productCategory}")
-    public List<Product> getProductsByCategory(String category) throws NoSearchResultsException{
+    public List<Product> getProductsByCategory(@PathVariable("productCategory") String category) throws NoSearchResultsException {
         return searchService.getProductsByCategory(category);
     }
 
-    @GetMapping("product/{productCategoryPrice}")
-    public List<Product> getProductsByCategoryPrice(String category, double price) throws NoSearchResultsException {
-        return searchService.getProductsByCategoryPrice(category,price);
-    }
+    @GetMapping("product/{category}/{price}")
+    public List<Product> getProductsByCategoryPrice(@PathVariable String category, @PathVariable double price) throws NoSearchResultsException {
+        return searchService.getProductsByCategoryPrice(category, price);
+}
+
     
-
-
 }

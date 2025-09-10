@@ -19,6 +19,15 @@ import java.util.List;
 @Data
 @Entity
 public class Product {
+    
+    public Product(){}
+
+    public Product(String description,int stock,double price){
+        this.description=description;
+        this.stock=stock;
+        this.price=price;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,10 +41,12 @@ public class Product {
     @Column
     private double price;
 
+    /*
     @OneToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
-
+    */
+    
     @ManyToMany
     @JoinTable(
             name = "product_category",

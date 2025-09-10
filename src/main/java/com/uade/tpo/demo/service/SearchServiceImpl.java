@@ -1,14 +1,11 @@
 package com.uade.tpo.demo.service;
 
-<<<<<<< HEAD
-=======
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
->>>>>>> origin/main
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.exceptions.NoSearchResultsException;
 import com.uade.tpo.demo.repository.ProductRepository;
@@ -21,24 +18,25 @@ import java.util.List;
 @Service
 public class SearchServiceImpl implements SearchService {
 
-<<<<<<< HEAD
-    private final ProductRepository productRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
-    public SearchServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
-
+    /* 
     @Override
     public List<Product> getProductsByPrice(double price) {
         return productRepository.findByPriceLessThanEqual(price);
     }
+    */
 
+    /* 
     @Override
     public List<Product> getProductsByDescription(String q) {
         if (q == null || q.isBlank()) return Collections.emptyList();
         return productRepository.findByDescriptionContainingIgnoreCase(q);
     }
+    */
 
+    /* 
     @Override
     public List<Product> getProductsByCategory(String category) {
         if (category == null || category.isBlank()) return Collections.emptyList();
@@ -49,7 +47,9 @@ public class SearchServiceImpl implements SearchService {
             return Collections.emptyList();
         }
     }
-=======
+    */
+
+
     //Busca filtrando por precio
     @Transactional(rollbackFor = Throwable.class)
     public List<Product> getProductsByPrice(double price) throws NoSearchResultsException{
@@ -92,5 +92,4 @@ public class SearchServiceImpl implements SearchService {
 
 
     
->>>>>>> origin/main
 }
