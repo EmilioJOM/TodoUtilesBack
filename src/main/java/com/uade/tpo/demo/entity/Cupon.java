@@ -11,7 +11,7 @@ public class Cupon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCupon;
 
-    private String cupon;       // Codigo del cupon
+    private String cupon;       // Código del cupón
     private Integer descuento;  // % o monto fijo
     private String tipo;        // "porcentaje" o "monto"
     private LocalDateTime validez; // Fecha de expiración

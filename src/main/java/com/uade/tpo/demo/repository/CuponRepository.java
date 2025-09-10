@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface CuponRepository extends JpaRepository<Cupon, Long> {
-    Optional<Cupon> findByCupon(String cupon); // Buscar por código de cupón
+    Optional<Cupon> findByCupon(String cupon);
 }
