@@ -43,6 +43,7 @@ public class SearchController {
 
     @GetMapping("product/{category}/{price}")
     public List<Product> getProductsByCategoryPrice(@PathVariable String category, @PathVariable double price) throws NoSearchResultsException {
+        System.out.println("POST: searches/productos/"+category+"/"+price);
         return searchService.getProductsByCategoryPrice(category, price);
 }
 
