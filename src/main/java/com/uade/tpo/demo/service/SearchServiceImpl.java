@@ -69,8 +69,8 @@ public class SearchServiceImpl implements SearchService {
 
     // busca filtrando por categoria
     @Transactional(rollbackFor = Throwable.class)
-    public List<Product> getProductsByCategory(String category) throws NoSearchResultsException{
-        List<Product> aux=productRepository.findByCategory(category);
+    public List<Product> getProductsByCategory(Long category) throws NoSearchResultsException{
+        List<Product> aux=productRepository.findByCategories_Id(category);
         if(aux.isEmpty()){
             throw new NoSearchResultsException();
         }
@@ -80,8 +80,21 @@ public class SearchServiceImpl implements SearchService {
     // busca filtrando por categoria y precio
     @Transactional(rollbackFor = Throwable.class)
     public List<Product> getProductsByCategoryPrice(String category,double price) throws NoSearchResultsException{
-        List<Product> aux= productRepository.findByCategoryPrice(category,price);
+        List<Product> aux= productRepository.findByCategoryDescriptionAndPrice(category,price);
         if (aux.isEmpty()){
+            throw new NoSearchResultsException();
+        }
+        return aux;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public List<Product> getProductsByCategory(String category) throws NoSearchResultsException {
+        if (category == null || category.isBlank()) {
+        throw new NoSearchResultsException();
+        }
+        List<Product> aux = productRepository.findByCategoryDescription(category);
+        if (aux.isEmpty()) {
             throw new NoSearchResultsException();
         }
         return aux;

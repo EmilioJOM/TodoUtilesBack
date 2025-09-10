@@ -3,6 +3,8 @@ package com.uade.tpo.demo.service;
 import com.uade.tpo.demo.entity.Product;
 import java.util.List;
 
+import com.uade.tpo.demo.entity.Category;
+import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.exceptions.NoSearchResultsException;
 
 public interface SearchService {
