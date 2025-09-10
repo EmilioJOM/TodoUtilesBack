@@ -9,10 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.exceptions.NoSearchResultsException;
 import com.uade.tpo.demo.repository.ProductRepository;
-import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
 
 
 @Service
