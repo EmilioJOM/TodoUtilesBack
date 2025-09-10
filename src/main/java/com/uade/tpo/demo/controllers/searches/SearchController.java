@@ -21,23 +21,29 @@ public class SearchController {
     private SearchService searchService;
 
     @GetMapping("precio/{productPrice}")
-    public List<Product> getProductsByPrice(@PathVariable("productPrice") double price) throws NoSearchResultsException {
+    public List<Product> getProductsByPrice(@PathVariable("productPrice") double price)
+            throws NoSearchResultsException {
+        System.out.println("GET: searches/precio/"+price);
         return searchService.getProductsByPrice(price);
     }
 
     @GetMapping("producto/{productDescription}")
-    public List<Product> getProductsByDescription(@PathVariable("productDescription") String description) throws NoSearchResultsException {
+    public List<Product> getProductsByDescription(@PathVariable("productDescription") String description)
+            throws NoSearchResultsException {
+        System.out.println("GET: searches/producto/"+description);
         return searchService.getProductsByDescription(description);
     }
 
-    //La idea seria que le pase la descripcion de la categoria pero esta sujeto a cambios supongo
     @GetMapping("category/{productCategory}")
-    public List<Product> getProductsByCategory(@PathVariable("productCategory") String category) throws NoSearchResultsException {
+    public List<Product> getProductsByCategory(@PathVariable("productCategory") String category)
+            throws NoSearchResultsException {
+        System.out.println("GET: searches/categoria/"+category.toString());
         return searchService.getProductsByCategory(category);
     }
 
     @GetMapping("product/{category}/{price}")
     public List<Product> getProductsByCategoryPrice(@PathVariable String category, @PathVariable double price) throws NoSearchResultsException {
+        System.out.println("POST: searches/productos/"+category+"/"+price);
         return searchService.getProductsByCategoryPrice(category, price);
 }
 

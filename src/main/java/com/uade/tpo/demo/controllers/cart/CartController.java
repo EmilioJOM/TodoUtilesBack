@@ -36,6 +36,7 @@ public class CartController {
     // Obtener o crear el carrito activo
     @GetMapping("/cart")
     public ResponseEntity<CartResponseDTO> getOrCreateActiveCart(@RequestParam Long userId) {
+        System.out.println("GET: carts/cart");
         User user = getUserById(userId);
         Cart cart = cartService.getOrCreateActiveCart(user);
 
@@ -53,6 +54,7 @@ public class CartController {
     // Obtener productos del carrito activo
     @GetMapping("/products")
     public ResponseEntity<List<CartProductResponseDTO>> getCartProducts(@RequestParam Long userId) {
+        System.out.println("GET: carts/products");
         User user = getUserById(userId);
         List<CartProducts> cartProducts = cartService.getActiveCartProducts(user);
 
@@ -75,6 +77,7 @@ public class CartController {
     public ResponseEntity<MessageResponseDTO> addProduct(@RequestParam Long userId,
                                                          @PathVariable Long productId,
                                                          @RequestParam int quantity) {
+        System.out.println("GET: carts/add/"+productId.toString());
         try {
             User user = getUserById(userId);
             cartService.addProductToCart(user, productId, quantity);
@@ -91,6 +94,7 @@ public class CartController {
     public ResponseEntity<MessageResponseDTO> updateProduct(@RequestParam Long userId,
                                                             @PathVariable Long productId,
                                                             @RequestParam int quantity) {
+        System.out.println("PUT: carts/update/"+productId.toString());
         try {
             User user = getUserById(userId);
             cartService.updateProductQuantity(user, productId, quantity);
@@ -105,6 +109,7 @@ public class CartController {
     @DeleteMapping("/remove/{productId}")
     public ResponseEntity<MessageResponseDTO> removeProduct(@RequestParam Long userId,
                                                             @PathVariable Long productId) {
+        System.out.println("DELETE: carts/remove/"+productId.toString());
         User user = getUserById(userId);
         try {
             cartService.removeProductFromCart(user, productId);
@@ -117,6 +122,7 @@ public class CartController {
     // Comprar el carrito
     @PostMapping("/purchase")
     public ResponseEntity<MessageResponseDTO> purchaseCart(@RequestParam Long userId) throws EmptyCartException {
+        System.out.println("POST: carts/purchase");
         User user = getUserById(userId);
         cartService.purchaseCart(user);
         return ResponseEntity.ok(new MessageResponseDTO("Se confirmó el carrito de compras correctamente"));
