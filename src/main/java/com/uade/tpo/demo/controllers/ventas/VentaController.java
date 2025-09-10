@@ -42,4 +42,16 @@ public class VentaController {
         venta.setIdCupon(idCupon);
         return ventaService.crearVenta(venta);
     }
+
+    @PostMapping("/checkout")
+    public Venta checkout(@RequestParam Long idUsuario,
+                          @RequestParam Double total,
+                          @RequestParam String metodoPago,
+                          @RequestParam(required = false) String codigoCupon) {
+        Venta venta = new Venta();
+        venta.setIdUsuario(idUsuario);
+        venta.setTotal(total);
+        venta.setMetodoPago(metodoPago);
+        return ventaService.checkout(venta, codigoCupon);
+    }
 }
