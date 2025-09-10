@@ -9,6 +9,15 @@ import java.util.List;
 @Data
 @Entity
 public class Product {
+
+    public Product(){}
+
+    public Product(String description, int stock, double price){
+        this.description=description;
+        this.stock=stock;
+        this.price=price;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,4 +38,13 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories = new ArrayList<>();
+
+
+    public void addCategory(Category category){
+        this.categories.add(category);
+    }
+
+    public void deleteCategory(Category category){
+        this.categories.remove(category);
+    }
 }
