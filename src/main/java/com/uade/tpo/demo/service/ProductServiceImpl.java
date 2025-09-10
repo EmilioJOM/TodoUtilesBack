@@ -37,8 +37,12 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.save(db);
     }
 
-    public void eraseProduct(Long id) {
+    public Boolean eraseProduct(Long id) {
         productRepository.deleteById(id);
+        if(productRepository.findById(id).isPresent()){
+            return false;
+        }
+        return true;
     }
 
 

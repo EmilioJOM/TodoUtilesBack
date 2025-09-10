@@ -8,7 +8,7 @@ public interface ProductService {
 
     public Product updateProduct(Long id, Product p);
 
-    public void eraseProduct(Long id);
+    public Boolean eraseProduct(Long id);
 
     
 

@@ -14,8 +14,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @Entity
 public class Product {
@@ -40,6 +38,9 @@ public class Product {
 
     @Column
     private double price;
+
+    @Column
+    private List<String> images;
 
     /*
     @OneToOne
