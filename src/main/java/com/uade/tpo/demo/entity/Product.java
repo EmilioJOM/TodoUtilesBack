@@ -1,19 +1,9 @@
 package com.uade.tpo.demo.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -32,10 +22,7 @@ public class Product {
     @Column
     private double price;
 
-    @OneToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
-    private Category category;
-
+    // ÚNICA relación de categorías
     @ManyToMany
     @JoinTable(
             name = "product_category",
@@ -43,5 +30,4 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories = new ArrayList<>();
-
 }
