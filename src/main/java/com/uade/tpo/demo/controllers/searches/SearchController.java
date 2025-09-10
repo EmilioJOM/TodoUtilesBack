@@ -20,18 +20,21 @@ public class SearchController {
     @GetMapping("precio/{productPrice}")
     public List<Product> getProductsByPrice(@PathVariable("productPrice") double price)
             throws NoSearchResultsException {
+        System.out.println("GET: searches/precio/"+price);
         return searchService.getProductsByPrice(price);
     }
 
     @GetMapping("producto/{productDescription}")
     public List<Product> getProductsByDescription(@PathVariable("productDescription") String description)
             throws NoSearchResultsException {
+        System.out.println("GET: searches/producto/"+description);
         return searchService.getProductsByDescription(description);
     }
 
     @GetMapping("categoria/{productCategory}")
     public List<Product> getProductsByCategory(@PathVariable("productCategory") String category)
             throws NoSearchResultsException {
+        System.out.println("GET: searches/categoria/"+category.toString());
         return searchService.getProductsByCategory(category);
     }
 }

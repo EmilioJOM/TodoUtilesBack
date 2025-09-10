@@ -20,12 +20,14 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request) {
+        System.out.println("POST: api/vq/auth/register");
         return ResponseEntity.ok(service.register(request));
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request) {
+        System.out.println("POST: api/vq/auth/aunthenticate");
         return ResponseEntity.ok(service.authenticate(request));
     }
 }

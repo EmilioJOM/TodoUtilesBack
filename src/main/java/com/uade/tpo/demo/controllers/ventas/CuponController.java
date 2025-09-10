@@ -24,18 +24,21 @@ public class CuponController {
     // Buscar cupón por código
     @GetMapping("/{codigo}")
     public Optional<Cupon> getCuponByCodigo(@PathVariable String codigo) {
+        System.out.println("GET: cupones/"+codigo.toString());
         return cuponService.getCuponByCodigo(codigo);
     }
 
     // Crear nuevo cupón
     @PostMapping
     public Cupon crearCupon(@RequestBody Cupon cupon) {
+        System.out.println("POST: cupones");
         return cuponService.crearCupon(cupon);
     }
 
     // Eliminar cupón
     @DeleteMapping("/{idCupon}")
     public void eliminarCupon(@PathVariable Long idCupon) {
+        System.out.println("DELETE: cupones/"+idCupon.toString());
         cuponService.eliminarCupon(idCupon);
     }
 }

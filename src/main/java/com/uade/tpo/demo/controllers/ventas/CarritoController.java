@@ -17,24 +17,28 @@ public class CarritoController {
     // Obtener carrito de un usuario
     @GetMapping("/{idUsuario}")
     public List<Carrito> getCarritoUsuario(@PathVariable Long idUsuario) {
+        System.out.println("GET: carrito/"+idUsuario.toString());
         return carritoService.getCarritoUsuario(idUsuario);
     }
 
     // Agregar producto al carrito
     @PostMapping
     public Carrito agregarProducto(@RequestBody Carrito carrito) {
+        System.out.println("POST: carrito");
         return carritoService.agregarProducto(carrito);
     }
 
     // Eliminar un producto del carrito
     @DeleteMapping("/{idCarrito}")
     public void eliminarProducto(@PathVariable Long idCarrito) {
+        System.out.println("DELETE: carrito/"+idCarrito.toString());
         carritoService.eliminarProducto(idCarrito);
     }
 
     // Vaciar carrito de un usuario
     @DeleteMapping("/usuario/{idUsuario}")
     public void vaciarCarrito(@PathVariable Long idUsuario) {
+        System.out.println("DELETE: carrito/usuario/"+idUsuario.toString());
         carritoService.vaciarCarrito(idUsuario);
     }
 }

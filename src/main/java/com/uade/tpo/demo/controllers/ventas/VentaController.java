@@ -23,6 +23,7 @@ public class VentaController {
     // Obtener ventas de un usuario específico
     @GetMapping("/{idUsuario}")
     public List<Venta> getVentasUsuario(@PathVariable Long idUsuario) {
+        System.out.println("GET: ventas/"+idUsuario.toString());
         return ventaService.getVentasUsuario(idUsuario);
     }
 
@@ -32,6 +33,8 @@ public class VentaController {
                             @RequestParam Double total,
                             @RequestParam String metodoPago,
                             @RequestParam(required = false) Long idCupon) {
+        System.out.println("POST: ventas");
+
         Venta venta = new Venta();
         venta.setIdUsuario(idUsuario);
         venta.setTotal(total);

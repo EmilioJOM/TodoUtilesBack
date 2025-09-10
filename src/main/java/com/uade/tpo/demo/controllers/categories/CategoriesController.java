@@ -24,6 +24,7 @@ public class CategoriesController {
     public ResponseEntity<Page<Category>> getCategories(
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size) {
+        System.out.println("GET: categories");
         if (page == null || size == null)
             return ResponseEntity.ok(categoryService.getCategories(PageRequest.of(0, Integer.MAX_VALUE)));
         return ResponseEntity.ok(categoryService.getCategories(PageRequest.of(page, size)));
@@ -31,6 +32,7 @@ public class CategoriesController {
 
     @GetMapping("/{categoryId}")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long categoryId) {
+        System.out.println("GET: categories/"+categoryId.toString());
         Optional<Category> result = categoryService.getCategoryById(categoryId);
         if (result.isPresent())
             return ResponseEntity.ok(result.get());
@@ -40,6 +42,7 @@ public class CategoriesController {
 
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<Object> deleteCategoryById(@PathVariable Long categoryId) {
+        System.out.println("DELETE: categories/"+categoryId.toString());
         Boolean result = categoryService.deleteCategoryById(categoryId);
         if (result)
             return ResponseEntity.ok().build();
@@ -50,6 +53,7 @@ public class CategoriesController {
     @PostMapping
     public ResponseEntity<Object> createCategory(@RequestBody CategoryRequest categoryRequest)
             throws CategoryDuplicateException {
+        System.out.println("POST: categories");
         Category result = categoryService.createCategory(categoryRequest.getDescription());
         return ResponseEntity.created(URI.create("/categories/" + result.getId())).body(result);
     }
