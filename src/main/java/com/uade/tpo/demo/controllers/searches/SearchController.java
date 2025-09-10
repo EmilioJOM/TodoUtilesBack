@@ -1,21 +1,24 @@
 package com.uade.tpo.demo.controllers.searches;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.exceptions.NoSearchResultsException;
 import com.uade.tpo.demo.service.SearchService;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
-@RequestMapping("/searches")
+@RequestMapping("searches/")
 public class SearchController {
-
-    private final SearchService searchService;
-
-    public SearchController(SearchService searchService) {
-        this.searchService = searchService;
-    }
+    
+    @Autowired
+    private SearchService searchService;
 
     @GetMapping("precio/{productPrice}")
     public List<Product> getProductsByPrice(@PathVariable("productPrice") double price)
@@ -31,11 +34,18 @@ public class SearchController {
         return searchService.getProductsByDescription(description);
     }
 
-    @GetMapping("categoria/{productCategory}")
+    @GetMapping("category/{productCategory}")
     public List<Product> getProductsByCategory(@PathVariable("productCategory") String category)
             throws NoSearchResultsException {
         System.out.println("GET: searches/categoria/"+category.toString());
         return searchService.getProductsByCategory(category);
     }
+
+    @GetMapping("product/{category}/{price}")
+    public List<Product> getProductsByCategoryPrice(@PathVariable String category, @PathVariable double price) throws NoSearchResultsException {
+        return searchService.getProductsByCategoryPrice(category, price);
+}
+
+    
 }
 
