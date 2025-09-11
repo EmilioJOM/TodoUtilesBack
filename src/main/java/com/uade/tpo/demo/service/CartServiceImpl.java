@@ -175,8 +175,6 @@ public class CartServiceImpl implements CartService {
         Cart cart = getOrCreateActiveCart(user);
         return cart.getCartProducts();
     }
-
-    // Método privado para actualizar el subtotal
     
     private void updateCartSubtotal(Cart cart) {
         double subtotal = cart.getCartProducts().stream()

@@ -57,7 +57,7 @@ public class VentaService {
             }
         }
 
-        // Setear el total final y guardar venta
+
         venta.setTotal(total);
         return ventaRepository.save(venta);
     }

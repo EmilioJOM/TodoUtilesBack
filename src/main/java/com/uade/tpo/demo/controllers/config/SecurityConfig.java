@@ -34,11 +34,9 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/auth/**").permitAll() // Registrar / Login -> GUEST USER ADMIN
 
                                 // ================ PRODUCTOS ================
-                                // Obtener (GET) -> GUEST USER ADMIN
                                 .requestMatchers(HttpMethod.GET, "/api/productos", "/api/productos/*", "/uploads/**").permitAll()
-                                // Crear/Eliminar/Mutaciones -> ADMIN
-                                .requestMatchers(HttpMethod.POST, "/api/productos").hasAuthority("ADMIN")                           // crear
-                                .requestMatchers(HttpMethod.DELETE, "/api/productos/*").hasAuthority("ADMIN")                       // borrar
+                                .requestMatchers(HttpMethod.POST, "/api/productos").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/productos/*").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/productos/add-category").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/productos/delete-category").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/productos/change-description").hasAuthority("ADMIN")
@@ -47,29 +45,27 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/productos/*/imagen").hasAuthority("ADMIN")
 
                                 // ================ CATEGORÍAS ================
-                                // Listar / Obtener -> GUEST USER ADMIN
                                 .requestMatchers(HttpMethod.GET, "/categories", "/categories/*").permitAll()
-                                // Crear / Borrar -> ADMIN
                                 .requestMatchers(HttpMethod.POST, "/categories").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/categories/*").hasAuthority("ADMIN")
 
                                 // ================ BÚSQUEDAS ================
-                                .requestMatchers("/searches/**").permitAll() // todas -> GUEST USER ADMIN
+                                .requestMatchers("/searches/**").permitAll()
 
                                 // ================ CARRITO (nuevo) ================
-                                .requestMatchers("/carts/**").hasAnyAuthority("USER","ADMIN") // 31–36 -> USER ADMIN
+                                .requestMatchers("/carts/**").hasAnyAuthority("USER","ADMIN")
 
                                 // ================ CARRITO LEGACY ================
-                                .requestMatchers("/carrito/**").hasAuthority("ADMIN") // 40–43 -> ADMIN
+                                .requestMatchers("/carrito/**").hasAuthority("ADMIN")
 
                                 // ================ CUPONES ================
-                                .requestMatchers("/cupones/**").hasAuthority("ADMIN") // 50–53 -> ADMIN
+                                .requestMatchers("/cupones/**").hasAuthority("ADMIN")
 
                                 // ================ VENTAS ================
-                                .requestMatchers(HttpMethod.GET, "/ventas", "/ventas/*").hasAuthority("ADMIN")    // 60, 61 -> ADMIN
-                                .requestMatchers(HttpMethod.POST, "/ventas").hasAnyAuthority("USER","ADMIN")      // 62 -> USER ADMIN
+                                .requestMatchers(HttpMethod.GET, "/ventas", "/ventas/*").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/ventas").hasAnyAuthority("USER","ADMIN")
 
-                                // Cualquier otra ruta autenticada
+                                // ================= RESTO ================
                                 .anyRequest().authenticated()
                         )
                                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

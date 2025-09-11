@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService{
             throw new IllegalArgumentException("El archivo de imagen es obligatorio");
         }
 
-        // Validaciones simples de tipo (opcional)
+
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new IllegalArgumentException("El archivo debe ser una imagen");
@@ -64,7 +64,7 @@ public class ProductServiceImpl implements ProductService{
                 "producto_" + id       // prefijo del nombre
         );
 
-        // Persistir URL en el producto
+
         producto.setImagen(url);
         return productRepository.save(producto);
     }

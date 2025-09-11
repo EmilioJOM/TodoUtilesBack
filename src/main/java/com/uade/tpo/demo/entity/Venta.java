@@ -21,7 +21,7 @@ public class Venta {
 
     private Long idCupon;
 
-    // --- Getters y Setters ---
+
     public Long getIdVenta() {
         return idVenta;
     }
