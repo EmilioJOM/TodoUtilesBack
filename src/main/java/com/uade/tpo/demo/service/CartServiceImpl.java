@@ -87,19 +87,32 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public Cart updateProductQuantity(User user, Long productId, int quantity) {
-        if (quantity < 0) throw new RuntimeException("Cantidad inválida");
+        
 
         Cart cart = getOrCreateActiveCart(user);
         CartProducts cartProduct = cartProductsRepository
                 .findByCartIdAndProductId(cart.getId(), productId)
                 .orElseThrow(() -> new RuntimeException("El producto no está en el carrito"));
 
-        if (quantity > cartProduct.getProduct().getStock()) {
+        if (quantity > 0 && quantity > cartProduct.getProduct().getStock()) {
             throw new RuntimeException("Cantidad supera el stock");
         }
 
-        cartProduct.setQuantity(quantity);
-        cartProductsRepository.save(cartProduct);
+        int newQuantity = cartProduct.getQuantity()+quantity;
+
+        if(newQuantity<0){
+            throw new RuntimeException("No se puede tener cantidad negativa en el carrito");
+        }
+
+        if(newQuantity==0){
+            cart.getCartProducts().remove(cartProduct);
+            cartProductsRepository.delete(cartProduct);
+        }else{
+            cartProduct.setQuantity(newQuantity);
+            cartProductsRepository.save(cartProduct);
+        }
+
+
         updateCartSubtotal(cart);
         cartRepository.save(cart);
         return cart;
