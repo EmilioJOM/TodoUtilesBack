@@ -6,8 +6,10 @@ import com.uade.tpo.demo.exceptions.InsufficientStockException;
 import com.uade.tpo.demo.repository.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,9 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private VentaRepository ventaRepository;
 
     @Override
     public Cart getOrCreateActiveCart(User user) {
@@ -141,7 +146,7 @@ public class CartServiceImpl implements CartService {
         //   Verificar si el usuario tiene un carrito en estado PENDING
         Optional<Cart> pendingCart = cartRepository.findPendingCartByUser(user.getId());
         if (pendingCart.isPresent()) {
-            throw new RuntimeException("No se puede confirmar el carrito: el usuario tiene una compra pendiente por finalizar");
+            throw new RuntimeException("No se puede confirmar el carrito: ya existe una compra pendiente");
         }
 
         if (cart.getCartProducts() == null || cart.getCartProducts().isEmpty()) {
@@ -175,6 +180,13 @@ public class CartServiceImpl implements CartService {
         updateCartSubtotal(cart);
         cartRepository.save(cart);
 
+        Venta venta = new Venta();
+        venta.setIdUsuario(user.getId());
+        venta.setCart(cart);
+        venta.setTotal(cart.getSubtotal());
+        venta.setFecha(LocalDateTime.now());
+        venta.setEstado("PENDING");
+        ventaRepository.save(venta);
     
         Cart newCart = new Cart();
         newCart.setUser(user);

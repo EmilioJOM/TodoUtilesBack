@@ -1,14 +1,12 @@
 package com.uade.tpo.demo.controllers.cart;
 
 import com.uade.tpo.demo.entity.Cart;
-import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.entity.User;
 import com.uade.tpo.demo.entity.CartProducts;
 import com.uade.tpo.demo.entity.dto.CartResponseDTO;
 import com.uade.tpo.demo.entity.dto.CartProductResponseDTO;
 import com.uade.tpo.demo.entity.dto.MessageResponseDTO;
 import com.uade.tpo.demo.exceptions.EmptyCartException;
-import com.uade.tpo.demo.repository.UserRepository;
 import com.uade.tpo.demo.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +24,7 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @Autowired
-    private UserRepository userRepository;
+
 
 
     // Obtener o crear el carrito activo
