@@ -40,6 +40,7 @@ public class User implements UserDetails {
 
     private String firstName;
 
+
     private String lastName;
 
     @OneToMany(mappedBy = "user")

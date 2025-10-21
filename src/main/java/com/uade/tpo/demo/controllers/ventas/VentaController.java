@@ -3,6 +3,7 @@ package com.uade.tpo.demo.controllers.ventas;
 import com.uade.tpo.demo.entity.User;
 import com.uade.tpo.demo.entity.Venta;
 import com.uade.tpo.demo.entity.dto.MessageResponseDTO;
+import com.uade.tpo.demo.entity.dto.VentaResponseDTO;
 import com.uade.tpo.demo.service.VentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/ventas")
@@ -61,10 +63,26 @@ public class VentaController {
 
 
     // Obtener todas las ventas
-    @GetMapping
-    public List<Venta> getVentas() {
-        return ventaService.getAllVentas();
-    }
+@GetMapping
+public List<VentaResponseDTO> getVentas() {
+    return ventaService.getAllVentas()
+            .stream()
+            .map(v -> {
+                String nombreUsuario = "";
+                if (v.getCart() != null && v.getCart().getUser() != null) {
+                    nombreUsuario = v.getCart().getUser().getFirstName() + " " + v.getCart().getUser().getLastName();
+                }
+                return new VentaResponseDTO(
+                        v.getIdVenta(),
+                        nombreUsuario,
+                        v.getFecha(),
+                        v.getTotal(),
+                        v.getMetodoPago(),
+                        v.getEstado()
+                );
+            })
+            .collect(Collectors.toList());
+}
 
     // Obtener ventas de un usuario específico
     @GetMapping("/{idUsuario}")
