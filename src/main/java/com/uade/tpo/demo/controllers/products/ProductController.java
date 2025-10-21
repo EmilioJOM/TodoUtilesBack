@@ -4,6 +4,8 @@ import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.exceptions.CategoryNonexistentException;
 import com.uade.tpo.demo.service.ProductService;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,6 +68,14 @@ public class ProductController {
     public Product changePrice(@RequestParam long id, @RequestParam double price) {
         System.out.println("POST: api/productos/change-price");
         return productService.changePrice(id, price);
+    }
+
+    
+    // Obtener TODOS los productos
+    @GetMapping
+    public List<Product> getAllProducts() {
+        System.out.println("GET: api/productos/");
+        return productService.getAllProducts();
     }
 
     // Obtener producto

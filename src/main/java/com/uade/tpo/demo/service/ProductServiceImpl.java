@@ -27,6 +27,10 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
     }
 
+    public List<Product> getAllProducts(){
+        return productRepository.findAll();
+    }
+
 
     public Product createProduct(String description, int stock, double price){
         Product auxProd=new Product(description,stock,price);

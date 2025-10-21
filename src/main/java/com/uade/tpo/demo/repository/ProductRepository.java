@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    
+
     //Filtra por descripcion
     @Query("SELECT p FROM Product p WHERE p.description = :description")
     List<Product> findByDescription(@Param("description") String description);

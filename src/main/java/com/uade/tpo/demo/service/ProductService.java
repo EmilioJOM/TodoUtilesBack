@@ -2,6 +2,9 @@ package com.uade.tpo.demo.service;
 
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.exceptions.CategoryNonexistentException;
+
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
@@ -17,6 +20,8 @@ public interface ProductService {
     public Product changeDescription(long id, String description);
 
     public Product addStock(long id, int stock);
+
+    public List<Product> getAllProducts();
 
     public Product obtainProduct(Long id);
 
