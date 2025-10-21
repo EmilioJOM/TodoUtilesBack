@@ -33,6 +33,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String name;
@@ -41,7 +42,6 @@ public class User implements UserDetails {
 
     private String firstName;
 
-    @Column(nullable = false, unique = true)
     private String lastName;
 
     @OneToMany(mappedBy = "user")
