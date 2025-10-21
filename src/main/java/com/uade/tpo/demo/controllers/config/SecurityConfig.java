@@ -17,6 +17,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -28,12 +33,14 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
-                                .csrf(AbstractHttpConfigurer::disable)
+                        .csrf(AbstractHttpConfigurer::disable)
+                        .cors(Customizer.withDefaults()) // 👈 HABILITA CORS
                         .authorizeHttpRequests(auth -> auth
-                                // ================= AUTH =================
-                                .requestMatchers("/api/v1/auth/**").permitAll() // Registrar / Login -> GUEST USER ADMIN
-
-                                // ================ PRODUCTOS ================
+                                // permitir preflight global
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 👈 OPCIONES
+                                // Auth pública
+                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                // Productos
                                 .requestMatchers(HttpMethod.GET, "/api/productos", "/api/productos/*", "/uploads/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/productos").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/api/productos/*").hasAuthority("ADMIN")
@@ -43,35 +50,43 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/productos/add-stock").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/productos/change-price").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/productos/*/imagen").hasAuthority("ADMIN")
-
-                                // ================ CATEGORÍAS ================
+                                // Categorías
                                 .requestMatchers(HttpMethod.GET, "/categories", "/categories/*").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/categories").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/categories/*").hasAuthority("ADMIN")
-
-                                // ================ BÚSQUEDAS ================
+                                // Búsquedas
                                 .requestMatchers("/searches/**").permitAll()
-
-                                // ================ CARRITO (nuevo) ================
+                                // Carrito
                                 .requestMatchers("/carts/**").hasAnyAuthority("USER","ADMIN")
-
-                                // ================ CARRITO LEGACY ================
+                                // Legacy
                                 .requestMatchers("/carrito/**").hasAuthority("ADMIN")
-
-                                // ================ CUPONES ================
+                                // Cupones
                                 .requestMatchers("/cupones/**").hasAuthority("ADMIN")
-
-                                // ================ VENTAS ================
+                                // Ventas
                                 .requestMatchers(HttpMethod.GET, "/ventas", "/ventas/*").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/ventas").hasAnyAuthority("USER","ADMIN")
-
-                                // ================= RESTO ================
+                                // Resto
                                 .anyRequest().authenticated()
                         )
-                                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                                .authenticationProvider(authenticationProvider)
-                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                        .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
+                        .authenticationProvider(authenticationProvider)
+                        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
+        }
+
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration cfg = new CorsConfiguration();
+                // tu Vite dev server
+                cfg.setAllowedOriginPatterns(List.of("http://localhost:5173"));
+                cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
+                cfg.setAllowedHeaders(List.of("Content-Type","Authorization","X-Requested-With","Accept","Origin"));
+                cfg.setExposedHeaders(List.of("Authorization")); // si exponés el JWT en header
+                cfg.setAllowCredentials(true);
+
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", cfg);
+                return source;
         }
 }
