@@ -54,12 +54,14 @@ public class CartController {
             return ResponseEntity.noContent().build();
         }
 
-        List<CartProductResponseDTO> response = cartProducts.stream()
-                .map(cp -> new CartProductResponseDTO(
-                        cp.getProduct().getDescription(),
-                        cp.getQuantity()
-                ))
-                .collect(Collectors.toList());
+    List<CartProductResponseDTO> response = cartProducts.stream()
+        .map(cp -> new CartProductResponseDTO(
+            cp.getProduct().getId(),
+            cp.getProduct().getDescription(),
+            cp.getProduct().getPrice(),
+            cp.getQuantity()
+        ))
+    .collect(Collectors.toList());
 
         return ResponseEntity.ok(response);
     }
