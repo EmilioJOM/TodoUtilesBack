@@ -1,9 +1,12 @@
 package com.uade.tpo.demo.controllers.products;
 
+import com.uade.tpo.demo.entity.Imagen;
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.exceptions.CategoryNonexistentException;
+import com.uade.tpo.demo.service.ImageService;
 import com.uade.tpo.demo.service.ProductService;
 
+import java.awt.*;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +21,7 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
- 
+    private ImageService imageService;
     // Crear producto
     @PostMapping
     public Product createProduct(@RequestBody ProductRequest request) {
@@ -85,13 +88,23 @@ public class ProductController {
         return productService.obtainProduct(id);
     }
 
+//    @PostMapping("/{id}/imagen")
+//    public ResponseEntity<Product> subirImagen(
+//            @PathVariable Long id,
+//            @RequestParam("file") MultipartFile file
+//    ) {
+//        System.out.println("POST: api/productos/" + id + "/imagen");
+//        Product actualizado = productService.subirImagen(id, file);
+//        return ResponseEntity.ok(actualizado);
+//    }
+
     @PostMapping("/{id}/imagen")
-    public ResponseEntity<Product> subirImagen(
+    public ResponseEntity<String> subirImagen(
             @PathVariable Long id,
-            @RequestParam("file") MultipartFile file
-    ) {
-        System.out.println("POST: api/productos/" + id + "/imagen");
-        Product actualizado = productService.subirImagen(id, file);
-        return ResponseEntity.ok(actualizado);
+            @RequestPart("file") MultipartFile file) throws Exception {
+
+        Imagen saved = imageService.create(file);
+        productService.asociarImagen(id, saved.getId()); // implementá esta asociación
+        return ResponseEntity.ok("created:" + saved.getId());
     }
 }

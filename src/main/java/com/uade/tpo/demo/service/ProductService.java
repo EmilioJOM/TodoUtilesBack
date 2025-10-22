@@ -28,4 +28,7 @@ public interface ProductService {
     public Product changePrice(long id, double price);
 
     Product subirImagen(Long id, MultipartFile file);
+
+    void asociarImagen(Long productId, Long imagenId);
+
 }

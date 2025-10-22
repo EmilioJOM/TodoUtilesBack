@@ -9,14 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.authentication.AuthenticationProvider;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.context.SecurityContextHolder;
-import lombok.RequiredArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -40,9 +34,12 @@ public class SecurityConfig {
                                 // permitir preflight global
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 👈 OPCIONES
                                 // Auth pública
+                                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/auth/authenticate").permitAll()
                                 .requestMatchers("/api/v1/auth/**").permitAll()
                                 // Productos
                                 .requestMatchers(HttpMethod.GET, "/api/productos", "/api/productos/*", "/uploads/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/images/*").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/productos").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/api/productos/*").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/productos/add-category").hasAuthority("ADMIN")
@@ -51,7 +48,10 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/productos/add-stock").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/productos/change-price").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/productos/*/imagen").hasAuthority("ADMIN")
-                                // Categorías
+                                .requestMatchers(HttpMethod.POST, "/api/productos/*/imagen").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/api/productos/*/uploadImagev2").hasAuthority("ADMIN")
+
+                        // Categorías
                                 .requestMatchers(HttpMethod.GET, "/categories", "/categories/*").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/categories").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/categories/*").hasAuthority("ADMIN")
@@ -80,7 +80,7 @@ public class SecurityConfig {
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration cfg = new CorsConfiguration();
                 // tu Vite dev server
-                cfg.setAllowedOriginPatterns(List.of("http://localhost:*"));
+                cfg.setAllowedOriginPatterns(List.of("http://localhost:5173", "http://localhost:5174"));
                 cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
                 cfg.setAllowedHeaders(List.of("Content-Type","Authorization","X-Requested-With","Accept","Origin"));
                 cfg.setExposedHeaders(List.of("Authorization")); // si exponés el JWT en header

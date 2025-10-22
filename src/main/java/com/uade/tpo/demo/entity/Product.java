@@ -38,8 +38,9 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories = new ArrayList<>();
-    @Column
-    private String imagen;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "imagen_id")
+    private Imagen imagen;
 
 
     public void addCategory(Category category){

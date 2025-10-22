@@ -1,9 +1,11 @@
 package com.uade.tpo.demo.service;
 
 import com.uade.tpo.demo.entity.Category;
+import com.uade.tpo.demo.entity.Imagen;
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.exceptions.CategoryNonexistentException;
 import com.uade.tpo.demo.repository.CategoryRepository;
+import com.uade.tpo.demo.repository.ImagenRepository;
 import com.uade.tpo.demo.repository.ProductRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -22,6 +25,10 @@ public class ProductServiceImpl implements ProductService{
     private CategoryRepository categoryRepository;
     @Autowired
     private GuardarImagenes guardarImagenes;
+    @Autowired
+    private ImageStorageService imageStorageService;
+
+    @Autowired ImagenRepository imagenRepository;
 
     public Product obtainProduct(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
@@ -61,15 +68,15 @@ public class ProductServiceImpl implements ProductService{
         Product producto = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-        // Guardar archivo físicamente y obtener URL pública
-        String url = guardarImagenes.guardarArchivo(
-                file,
-                "productos",           // carpeta
-                "producto_" + id       // prefijo del nombre
-        );
-
-
-        producto.setImagen(url);
+        Product p = productRepository.findById(id).orElseThrow();
+        Imagen asset = null;
+        try {
+            asset = imageStorageService.saveAsJpg(file, "PRODUCT", "prod-" + id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        p.setImagen(asset);
+        productRepository.save(p);
         return productRepository.save(producto);
     }
 
@@ -131,6 +138,18 @@ public class ProductServiceImpl implements ProductService{
         if (p.getStock() <0){
             throw new RuntimeException("No puede haber un stock negativo.");
         }
+    }
+    @Transactional
+    @Override
+    public void asociarImagen(Long productId, Long imagenId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NoSuchElementException("Producto no encontrado: " + productId));
+
+        Imagen imagen = imagenRepository.findById(imagenId)
+                .orElseThrow(() -> new NoSuchElementException("Imagen no encontrada: " + imagenId));
+
+        product.setImagen(imagen);
+        productRepository.save(product);
     }
 
 }
