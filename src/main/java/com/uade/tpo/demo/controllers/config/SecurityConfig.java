@@ -80,7 +80,7 @@ public class SecurityConfig {
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration cfg = new CorsConfiguration();
                 // tu Vite dev server
-                cfg.setAllowedOriginPatterns(List.of("http://localhost:5173"));
+                cfg.setAllowedOriginPatterns(List.of("http://localhost:*"));
                 cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
                 cfg.setAllowedHeaders(List.of("Content-Type","Authorization","X-Requested-With","Accept","Origin"));
                 cfg.setExposedHeaders(List.of("Authorization")); // si exponés el JWT en header
