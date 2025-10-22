@@ -7,6 +7,7 @@ import com.uade.tpo.demo.entity.dto.CartResponseDTO;
 import com.uade.tpo.demo.entity.dto.CartProductResponseDTO;
 import com.uade.tpo.demo.entity.dto.MessageResponseDTO;
 import com.uade.tpo.demo.exceptions.EmptyCartException;
+import com.uade.tpo.demo.exceptions.InsufficientStockException;
 import com.uade.tpo.demo.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,6 @@ public class CartController {
 
     @Autowired
     private CartService cartService;
-
-
-
 
     // Obtener o crear el carrito activo
     @GetMapping("/cart")
@@ -66,55 +64,34 @@ public class CartController {
 
     // Agregar producto al carrito
     @PostMapping("/add/{productId}")
-    public ResponseEntity<MessageResponseDTO> addProduct(@AuthenticationPrincipal User user,
-                                                         @PathVariable Long productId,
-                                                         @RequestParam int quantity) {
-        System.out.println("GET: carts/add/"+productId.toString());
-        try {
-            cartService.addProductToCart(user, productId, quantity);
-            return ResponseEntity.created(URI.create("/carts/cart"))
-                    .body(new MessageResponseDTO("Producto agregado correctamente"));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(new MessageResponseDTO("No se pudo agregar por: " + e.getMessage()));
-        }
+    public ResponseEntity<MessageResponseDTO> addProduct(@AuthenticationPrincipal User user, @PathVariable Long productId, @RequestParam int quantity) throws InsufficientStockException {
+        System.out.println("POST: carts/add/"+productId.toString());
+        cartService.addProductToCart(user, productId, quantity);
+        return ResponseEntity.created(URI.create("/carts/cart"))
+                .body(new MessageResponseDTO("Producto agregado correctamente"));
     }
 
     // Editar cantidad de un producto en el carrito
     @PutMapping("/update/{productId}")
-    public ResponseEntity<MessageResponseDTO> updateProduct(@AuthenticationPrincipal User user,
-                                                            @PathVariable Long productId,
-                                                            @RequestParam int quantity) {
+    public ResponseEntity<MessageResponseDTO> updateProduct(@AuthenticationPrincipal User user,@PathVariable Long productId, @RequestParam int quantity) throws InsufficientStockException {
         System.out.println("PUT: carts/update/"+productId.toString());
-        try {
-            cartService.updateProductQuantity(user, productId, quantity);
-            return ResponseEntity.ok(new MessageResponseDTO("Carrito actualizado correctamente"));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(new MessageResponseDTO("No se pudo actualizar el carrito por: " + e.getMessage()));
-        }
+        cartService.updateProductQuantity(user, productId, quantity);
+        return ResponseEntity.ok(new MessageResponseDTO("Carrito actualizado correctamente"));
     }
 
     // Quitar un producto del carrito
     @DeleteMapping("/remove/{productId}")
-    public ResponseEntity<MessageResponseDTO> removeProduct(@AuthenticationPrincipal User user,
-                                                            @PathVariable Long productId) {
+    public ResponseEntity<MessageResponseDTO> removeProduct(@AuthenticationPrincipal User user,@PathVariable Long productId) {
         System.out.println("DELETE: carts/remove/"+productId.toString());
-        try {
-            cartService.removeProductFromCart(user, productId);
-            return ResponseEntity.ok(new MessageResponseDTO("El producto fue eliminado del carrito correctamente"));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new MessageResponseDTO("El producto no está en el carrito"));
-        }
+        cartService.removeProductFromCart(user, productId);
+        return ResponseEntity.ok(new MessageResponseDTO("El producto fue eliminado del carrito correctamente"));
     }
 
     // Comprar el carrito
     @PostMapping("/purchase")
-    public ResponseEntity<MessageResponseDTO> purchaseCart(@AuthenticationPrincipal User user) throws EmptyCartException {
+    public ResponseEntity<MessageResponseDTO> purchaseCart(@AuthenticationPrincipal User user) throws EmptyCartException, InsufficientStockException {
         System.out.println("POST: carts/purchase");
         cartService.purchaseCart(user);
         return ResponseEntity.ok(new MessageResponseDTO("Se confirmó el carrito de compras correctamente"));
     }
 }
-
-
