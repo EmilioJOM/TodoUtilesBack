@@ -10,4 +10,5 @@ public class CartProductResponseDTO {
     private String description;
     private double price;
     private int quantity;
+    private int stock;
 }

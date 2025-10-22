@@ -59,7 +59,8 @@ public class CartController {
             cp.getProduct().getId(),
             cp.getProduct().getDescription(),
             cp.getProduct().getPrice(),
-            cp.getQuantity()
+            cp.getQuantity(),
+            cp.getProduct().getStock()
         ))
     .collect(Collectors.toList());
 
