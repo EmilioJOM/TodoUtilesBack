@@ -54,11 +54,12 @@ public class VentaService {
                 .orElseThrow(() -> new RuntimeException("No hay venta pendiente para confirmar"));
 
         double total = venta.getTotal();
-
+        System.out.println(codigoCupon);
         // Aplicar cupón si existe
         if (codigoCupon != null && !codigoCupon.isEmpty()) {
             Optional<Cupon> cuponOpt = cuponRepository.findByCupon(codigoCupon);
             if (cuponOpt.isPresent()) {
+                System.out.println("cupon encontrado");
                 Cupon cupon = cuponOpt.get();
                 if (cupon.getValidez().isAfter(LocalDateTime.now())) {
                     if ("porcentaje".equalsIgnoreCase(cupon.getTipo())) {
@@ -67,8 +68,10 @@ public class VentaService {
                         total -= cupon.getDescuento();
                     }
                     venta.setIdCupon(cupon.getIdCupon());
+                    System.out.println("cupon aplicado");
                 }
             }
+            else{System.out.println("cupon no encontrado");}
         }
 
         venta.setMetodoPago(metodoPago);
