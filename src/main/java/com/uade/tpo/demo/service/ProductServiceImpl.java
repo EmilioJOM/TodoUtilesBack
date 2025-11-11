@@ -31,14 +31,12 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.findAll();
     }
 
-
     public Product createProduct(String description, int stock, double price){
         Product auxProd=new Product(description,stock,price);
         validarBasico(auxProd);
         productRepository.save(auxProd);
         return auxProd;
     }
-
 
     public Product changePrice(long id, double price){
         Product auxProd= obtainProduct(id);
@@ -51,7 +49,6 @@ public class ProductServiceImpl implements ProductService{
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("El archivo de imagen es obligatorio");
         }
-
 
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
@@ -68,14 +65,12 @@ public class ProductServiceImpl implements ProductService{
                 "producto_" + id       // prefijo del nombre
         );
 
-
         producto.setImagen(url);
         return productRepository.save(producto);
     }
 
-
     @Transactional(rollbackFor = Throwable.class)
-    public Product addProductCategory(long id, String categoryDescription) throws CategoryNonexistentException{
+    public Product addProductCategory(long id, String categoryDescription) {
         List<Category> category=categoryRepository.findCategoryByDescription(categoryDescription);
         if(category.isEmpty()){
             throw new CategoryNonexistentException();
@@ -85,9 +80,8 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.save(auxProd);
     }
 
-
     @Transactional(rollbackFor = Throwable.class)
-    public Product deleteProductCategory(long id, String categoryDescription) throws CategoryNonexistentException{
+    public Product deleteProductCategory(long id, String categoryDescription) {
         List<Category> category=categoryRepository.findCategoryByDescription(categoryDescription);
         if(category.isEmpty()){
             throw new CategoryNonexistentException();
@@ -95,9 +89,7 @@ public class ProductServiceImpl implements ProductService{
         Product auxProd=obtainProduct(id);
         auxProd.deleteCategory(category.get(0));
         return productRepository.save(auxProd);
-        
     }
-
 
     public Product changeDescription(long id, String description){
         Product auxProd=obtainProduct(id);
@@ -111,15 +103,13 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.save(auxProd);
     }
 
-
     public Boolean eraseProduct(Long id) {
-        productRepository.deleteById(id);
-        if(productRepository.findById(id).isPresent()){
-            return false;
+        if (!productRepository.existsById(id)) {
+            throw new RuntimeException("Producto con ID " + id + " no encontrado");
         }
-        return true;
+        productRepository.deleteById(id);
+        return !productRepository.existsById(id);
     }
-
 
     private void validarBasico(Product p) {
         if (p.getDescription() == null || p.getDescription().isBlank()) {
@@ -132,5 +122,4 @@ public class ProductServiceImpl implements ProductService{
             throw new RuntimeException("No puede haber un stock negativo.");
         }
     }
-
 }

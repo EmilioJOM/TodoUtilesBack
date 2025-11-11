@@ -6,8 +6,6 @@ import com.uade.tpo.demo.entity.CartProducts;
 import com.uade.tpo.demo.entity.dto.CartResponseDTO;
 import com.uade.tpo.demo.entity.dto.CartProductResponseDTO;
 import com.uade.tpo.demo.entity.dto.MessageResponseDTO;
-import com.uade.tpo.demo.exceptions.EmptyCartException;
-import com.uade.tpo.demo.exceptions.InsufficientStockException;
 import com.uade.tpo.demo.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +62,8 @@ public class CartController {
 
     // Agregar producto al carrito
     @PostMapping("/add/{productId}")
-    public ResponseEntity<MessageResponseDTO> addProduct(@AuthenticationPrincipal User user, @PathVariable Long productId, @RequestParam int quantity) throws InsufficientStockException {
+    public ResponseEntity<MessageResponseDTO> addProduct(@AuthenticationPrincipal User user, @PathVariable Long productId, @RequestParam int quantity) {
+        // CORREGIDO: Quitado throws InsufficientStockException
         System.out.println("POST: carts/add/"+productId.toString());
         cartService.addProductToCart(user, productId, quantity);
         return ResponseEntity.created(URI.create("/carts/cart"))
@@ -73,7 +72,8 @@ public class CartController {
 
     // Editar cantidad de un producto en el carrito
     @PutMapping("/update/{productId}")
-    public ResponseEntity<MessageResponseDTO> updateProduct(@AuthenticationPrincipal User user,@PathVariable Long productId, @RequestParam int quantity) throws InsufficientStockException {
+    public ResponseEntity<MessageResponseDTO> updateProduct(@AuthenticationPrincipal User user,@PathVariable Long productId, @RequestParam int quantity) {
+        // CORREGIDO: Quitado throws InsufficientStockException
         System.out.println("PUT: carts/update/"+productId.toString());
         cartService.updateProductQuantity(user, productId, quantity);
         return ResponseEntity.ok(new MessageResponseDTO("Carrito actualizado correctamente"));
@@ -89,7 +89,8 @@ public class CartController {
 
     // Comprar el carrito
     @PostMapping("/purchase")
-    public ResponseEntity<MessageResponseDTO> purchaseCart(@AuthenticationPrincipal User user) throws EmptyCartException, InsufficientStockException {
+    public ResponseEntity<MessageResponseDTO> purchaseCart(@AuthenticationPrincipal User user) {
+        // CORREGIDO: Quitado throws EmptyCartException, InsufficientStockException
         System.out.println("POST: carts/purchase");
         cartService.purchaseCart(user);
         return ResponseEntity.ok(new MessageResponseDTO("Se confirmó el carrito de compras correctamente"));

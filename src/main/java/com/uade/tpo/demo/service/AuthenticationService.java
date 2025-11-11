@@ -25,6 +25,11 @@ public class AuthenticationService {
         private final AuthenticationManager authenticationManager;
 
         public AuthenticationResponse register(RegisterRequest request) {
+                // VALIDAR SI USUARIO YA EXISTE
+                if (repository.findByEmail(request.getEmail()).isPresent()) {
+                        throw new RuntimeException("El usuario con email " + request.getEmail() + " ya existe");
+                }
+                
                 var user = User.builder()
                                 .firstName(request.getFirstname())
                                 .lastName(request.getLastname())
@@ -41,13 +46,20 @@ public class AuthenticationService {
         }
 
         public AuthenticationResponse authenticate(AuthenticationRequest request) {
-                authenticationManager.authenticate(
-                                new UsernamePasswordAuthenticationToken(
-                                                request.getEmail(),
-                                                request.getPassword()));
+                try {
+                        authenticationManager.authenticate(
+                                        new UsernamePasswordAuthenticationToken(
+                                                        request.getEmail(),
+                                                        request.getPassword()));
+                } catch (BadCredentialsException e) {
+                        throw new RuntimeException("Credenciales inválidas");
+                } catch (AuthenticationException e) {
+                        throw new RuntimeException("Error de autenticación");
+                }
 
                 var user = repository.findByEmail(request.getEmail())
-                                .orElseThrow();
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                
                 var jwtToken = jwtService.generateToken(user);
                 return AuthenticationResponse.builder()
                                 .accessToken(jwtToken)

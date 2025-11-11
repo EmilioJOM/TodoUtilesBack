@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uade.tpo.demo.entity.Product;
-import com.uade.tpo.demo.exceptions.NoSearchResultsException;
 import com.uade.tpo.demo.service.SearchService;
-
 
 @RestController
 @RequestMapping("searches/")
@@ -21,32 +19,26 @@ public class SearchController {
     private SearchService searchService;
 
     @GetMapping("precio/{productPrice}")
-    public List<Product> getProductsByPrice(@PathVariable("productPrice") double price)
-            throws NoSearchResultsException {
+    public List<Product> getProductsByPrice(@PathVariable("productPrice") double price) {
         System.out.println("GET: searches/precio/"+price);
         return searchService.getProductsByPrice(price);
     }
 
     @GetMapping("producto/{productDescription}")
-    public List<Product> getProductsByDescription(@PathVariable("productDescription") String description)
-            throws NoSearchResultsException {
+    public List<Product> getProductsByDescription(@PathVariable("productDescription") String description) {
         System.out.println("GET: searches/producto/"+description);
         return searchService.getProductsByDescription(description);
     }
 
     @GetMapping("category/{productCategory}")
-    public List<Product> getProductsByCategory(@PathVariable("productCategory") String category)
-            throws NoSearchResultsException {
-        System.out.println("GET: searches/categoria/"+category.toString());
+    public List<Product> getProductsByCategory(@PathVariable("productCategory") String category) {
+        System.out.println("GET: searches/categoria/"+category);
         return searchService.getProductsByCategory(category);
     }
 
     @GetMapping("product/{category}/{price}")
-    public List<Product> getProductsByCategoryPrice(@PathVariable String category, @PathVariable double price) throws NoSearchResultsException {
-        System.out.println("POST: searches/productos/"+category+"/"+price);
+    public List<Product> getProductsByCategoryPrice(@PathVariable String category, @PathVariable double price) {
+        System.out.println("GET: searches/productos/"+category+"/"+price);
         return searchService.getProductsByCategoryPrice(category, price);
+    }
 }
-
-    
-}
-

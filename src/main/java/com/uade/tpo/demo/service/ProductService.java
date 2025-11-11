@@ -1,7 +1,6 @@
 package com.uade.tpo.demo.service;
 
 import com.uade.tpo.demo.entity.Product;
-import com.uade.tpo.demo.exceptions.CategoryNonexistentException;
 
 import java.util.List;
 
@@ -13,9 +12,11 @@ public interface ProductService {
 
     public Boolean eraseProduct(Long id);
 
-    public Product addProductCategory(long id, String categoryDescription) throws CategoryNonexistentException;
+    // QUITAR throws CategoryNonexistentException
+    public Product addProductCategory(long id, String categoryDescription);
 
-    public Product deleteProductCategory(long id, String categoryDescription) throws CategoryNonexistentException;
+    // QUITAR throws CategoryNonexistentException  
+    public Product deleteProductCategory(long id, String categoryDescription);
 
     public Product changeDescription(long id, String description);
 

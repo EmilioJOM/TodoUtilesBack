@@ -1,7 +1,6 @@
 package com.uade.tpo.demo.controllers.products;
 
 import com.uade.tpo.demo.entity.Product;
-import com.uade.tpo.demo.exceptions.CategoryNonexistentException;
 import com.uade.tpo.demo.service.ProductService;
 
 import java.util.List;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 
 @RestController
 @RequestMapping("/api/productos")
@@ -35,16 +33,14 @@ public class ProductController {
 
     // Agregar categoría
     @PostMapping("/add-category")
-    public Product addProductCategory(@RequestParam long id, @RequestParam String categoryDescription)
-            throws CategoryNonexistentException {
-        System.out.println("DELETE: api/productos/add-category");
+    public Product addProductCategory(@RequestParam long id, @RequestParam String categoryDescription) {
+        System.out.println("POST: api/productos/add-category");
         return productService.addProductCategory(id, categoryDescription);
     }
 
     // Quitar categoría
     @PostMapping("/delete-category")
-    public Product deleteProductCategory(@RequestParam long id, @RequestParam String categoryDescription)
-            throws CategoryNonexistentException {
+    public Product deleteProductCategory(@RequestParam long id, @RequestParam String categoryDescription) {
         System.out.println("POST: api/productos/delete-category");
         return productService.deleteProductCategory(id, categoryDescription);
     }
@@ -70,7 +66,6 @@ public class ProductController {
         return productService.changePrice(id, price);
     }
 
-    
     // Obtener TODOS los productos
     @GetMapping
     public List<Product> getAllProducts() {

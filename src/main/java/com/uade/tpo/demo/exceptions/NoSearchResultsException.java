@@ -1,9 +1,12 @@
 package com.uade.tpo.demo.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "No se han podido encontrar productos que coincidan con tu busqueda")
-public class NoSearchResultsException extends Exception {
+public class NoSearchResultsException extends RuntimeException {
     
+    public NoSearchResultsException() {
+        super("No se encontraron resultados");
+    }
+    
+    public NoSearchResultsException(String message) {
+        super(message);
+    }
 }
