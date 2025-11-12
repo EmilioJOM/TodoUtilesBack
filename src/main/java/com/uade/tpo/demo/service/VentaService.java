@@ -89,6 +89,12 @@ public class VentaService {
     }
 
     @Transactional
+    public Venta getVentaById(Long idVenta) {
+    return ventaRepository.findById(idVenta)
+            .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+    }
+
+    @Transactional
     public Venta cancelarVenta(User user) {
         Venta venta = getPendingVentaByUser(user.getId())
                 .orElseThrow(() -> new RuntimeException("No hay venta pendiente para cancelar"));

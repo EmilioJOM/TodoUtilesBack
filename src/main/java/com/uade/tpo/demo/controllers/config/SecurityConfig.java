@@ -64,7 +64,8 @@ public class SecurityConfig {
                                 // Cupones
                                 .requestMatchers("/cupones/**").hasAuthority("ADMIN")
                                 // Ventas
-                                .requestMatchers(HttpMethod.GET, "/ventas", "/ventas/*").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/ventas").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/ventas/my").hasAnyAuthority("USER")
                                 .requestMatchers(HttpMethod.POST, "/ventas").hasAnyAuthority("USER","ADMIN")
                                 // Resto
                                 .anyRequest().authenticated()
