@@ -59,6 +59,12 @@ public class ProductController {
         return productService.changeDescription(id, description);
     }
 
+    //cambiar info extra
+    @PostMapping("/change-extraInfo")
+    public Product changeExtraInfo(@RequestParam long id, @RequestParam String info){
+        return productService.changeExtraInfo(id, info);
+    }
+
     // Agregar stock
     @PostMapping("/add-stock")
     public Product addStock(@RequestParam long id, @RequestParam int stock) {

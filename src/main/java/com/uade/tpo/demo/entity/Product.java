@@ -26,10 +26,14 @@ public class Product {
     private String description;
 
     @Column
+    private String extraInfo;
+
+    @Column
     private int stock;
 
     @Column
     private double price;
+
 
     @ManyToMany
     @JoinTable(

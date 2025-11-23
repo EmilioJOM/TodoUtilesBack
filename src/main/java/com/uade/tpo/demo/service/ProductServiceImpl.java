@@ -112,6 +112,12 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.save(auxProd);
     }
 
+    public Product changeExtraInfo(long id, String info){
+        Product auxProd=obtainProduct(id);
+        auxProd.setExtraInfo(info);
+        return productRepository.save(auxProd);
+    }
+
     public Product addStock(long id, int stock){
         Product auxProd=obtainProduct(id);
         auxProd.setStock(auxProd.getStock()+stock);

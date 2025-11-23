@@ -19,6 +19,8 @@ public interface ProductService {
 
     public Product changeDescription(long id, String description);
 
+    public Product changeExtraInfo(long id, String info);
+
     public Product addStock(long id, int stock);
 
     public List<Product> getAllProducts();
