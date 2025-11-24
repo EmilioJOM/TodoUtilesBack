@@ -152,8 +152,7 @@ public class VentaController {
                     .body("Venta no encontrada");
         }
 
-        // Validación por si no es admin y quiere otra venta
-        if (!venta.getIdUsuario().equals(user.getId())) {
+        if (!user.getRole().name().equals("ADMIN") && !venta.getIdUsuario().equals(user.getId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("No puedes ver compras de otro usuario");
         }
