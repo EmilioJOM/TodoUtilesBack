@@ -39,9 +39,10 @@ public class ProductServiceImpl implements ProductService{
     }
 
 
-    public Product createProduct(String description, int stock, double price){
+    public Product createProduct(String description, int stock, double price,String extraInfo){
         Product auxProd=new Product(description,stock,price);
         validarBasico(auxProd);
+        auxProd.setExtraInfo(extraInfo);
         productRepository.save(auxProd);
         return auxProd;
     }

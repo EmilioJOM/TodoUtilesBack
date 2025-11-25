@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
     
-    public Product createProduct(String description, int stock, double price);
+    public Product createProduct(String description, int stock, double price, String extraInfo);
 
     public Boolean eraseProduct(Long id);
 

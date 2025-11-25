@@ -14,5 +14,6 @@ public class ProductRequest {
     private String descripcion;
     private int stock;
     private double price;
+    private String extraInfo;
     
 }

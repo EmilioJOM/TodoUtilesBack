@@ -26,7 +26,7 @@ public class ProductController {
     @PostMapping
     public Product createProduct(@RequestBody ProductRequest request) {
         System.out.println("POST: api/productos");
-        return productService.createProduct(request.getDescripcion(), request.getStock(), request.getPrice());
+        return productService.createProduct(request.getDescripcion(), request.getStock(), request.getPrice(),request.getExtraInfo());
     }
 
     // Eliminar producto
