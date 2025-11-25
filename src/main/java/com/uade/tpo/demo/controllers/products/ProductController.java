@@ -21,12 +21,15 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
     private ImageService imageService;
+    
     // Crear producto
     @PostMapping
-    public Product createProduct(@RequestBody ProductRequest request) {
+    public Product createProduct(@RequestBody ProductRequest request) throws CategoryNonexistentException {
         System.out.println("POST: api/productos");
-        return productService.createProduct(request.getDescripcion(), request.getStock(), request.getPrice(),request.getExtraInfo());
+        return productService.createProduct(request.getDescripcion(), request.getStock(), request.getPrice(),request.getExtraInfo(),request.getCategory());
     }
 
     // Eliminar producto

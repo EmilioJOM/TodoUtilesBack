@@ -19,6 +19,7 @@ import java.util.NoSuchElementException;
 @Service
 public class ProductServiceImpl implements ProductService{
 
+
     @Autowired
     private ProductRepository productRepository;
     @Autowired
@@ -39,10 +40,11 @@ public class ProductServiceImpl implements ProductService{
     }
 
 
-    public Product createProduct(String description, int stock, double price,String extraInfo){
+    public Product createProduct(String description, int stock, double price,String extraInfo,String category){
         Product auxProd=new Product(description,stock,price);
         validarBasico(auxProd);
         auxProd.setExtraInfo(extraInfo);
+        auxProd.addCategory(categoryRepository.findByDescription(category).get(0));
         productRepository.save(auxProd);
         return auxProd;
     }
