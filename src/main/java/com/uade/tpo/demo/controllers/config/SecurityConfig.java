@@ -62,7 +62,8 @@ public class SecurityConfig {
                                 // Legacy
                                 .requestMatchers("/carrito/**").hasAuthority("ADMIN")
                                 // Cupones
-                                .requestMatchers("/cupones/**").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.GET,"/cupones/**").hasAnyAuthority("USER","ADMIN")
+                                .requestMatchers("/cupones/**").hasAnyAuthority("ADMIN")
                                 // Ventas
                                 .requestMatchers(HttpMethod.GET, "/ventas").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.GET, "/ventas/my").hasAnyAuthority("USER")
