@@ -22,73 +22,57 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-        private final JwtAuthenticationFilter jwtAuthFilter;
-        private final AuthenticationProvider authenticationProvider;
 
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-                http
-                        .csrf(AbstractHttpConfigurer::disable)
-                        .cors(Customizer.withDefaults()) // 👈 HABILITA CORS
-                        .authorizeHttpRequests(auth -> auth
-                                // permitir preflight global
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 👈 OPCIONES
-                                // Auth pública
-                                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/v1/auth/authenticate").permitAll()
-                                .requestMatchers("/api/v1/auth/**").permitAll()
-                                // Productos
-                                .requestMatchers(HttpMethod.GET, "/api/productos", "/api/productos/*", "/uploads/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/images/*").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/productos").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.DELETE, "/api/productos/*").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/productos/add-category").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/productos/delete-category").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/productos/change-description").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/productos/add-stock").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/productos/change-price").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/productos/*/imagen").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/productos/*/imagen").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/productos/*/uploadImagev2").hasAuthority("ADMIN")
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final AuthenticationProvider authenticationProvider;
 
-                        // Categorías
-                                .requestMatchers(HttpMethod.GET, "/categories", "/categories/*").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/categories").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.DELETE, "/categories/*").hasAuthority("ADMIN")
-                                // Búsquedas
-                                .requestMatchers("/searches/**").permitAll()
-                                // Carrito
-                                .requestMatchers("/carts/**").hasAnyAuthority("USER","ADMIN")
-                                // Legacy
-                                .requestMatchers("/carrito/**").hasAuthority("ADMIN")
-                                // Cupones
-                                .requestMatchers("/cupones/**").hasAuthority("ADMIN")
-                                // Ventas
-                                .requestMatchers(HttpMethod.GET, "/ventas").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/ventas/my").hasAnyAuthority("USER")
-                                .requestMatchers(HttpMethod.POST, "/ventas").hasAnyAuthority("USER","ADMIN")
-                                // Resto
-                                .anyRequest().authenticated()
-                        )
-                        .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
-                        .authenticationProvider(authenticationProvider)
-                        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(Customizer.withDefaults())
+            .authorizeHttpRequests(auth -> auth
 
-                return http.build();
-        }
+                // 1️⃣ AUTH pública (siempre primero)
+                .requestMatchers("/api/v1/auth/**").permitAll()
 
-        @Bean
-        public CorsConfigurationSource corsConfigurationSource() {
-                CorsConfiguration cfg = new CorsConfiguration();
-                // tu Vite dev server
-                cfg.setAllowedOriginPatterns(List.of("http://localhost:5173", "http://localhost:5174"));
-                cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
-                cfg.setAllowedHeaders(List.of("Content-Type","Authorization","X-Requested-With","Accept","Origin"));
-                cfg.setExposedHeaders(List.of("Authorization")); // si exponés el JWT en header
-                cfg.setAllowCredentials(true);
+                // 2️⃣ Recursos estáticos públicos
+                .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers("/images/**").permitAll()
 
-                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                source.registerCorsConfiguration("/**", cfg);
-                return source;
-        }
+                // 3️⃣ Productos públicos (solo GET)
+                .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
+
+                // 4️⃣ Permisos ADMIN
+                .requestMatchers(HttpMethod.POST, "/api/productos").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasAuthority("ADMIN")
+
+                // 5️⃣ Imágenes (permitidas para testear)
+                .requestMatchers(HttpMethod.POST, "/api/productos/*/imagen").permitAll()
+
+                // 6️⃣ El resto requiere autenticación
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration cfg = new CorsConfiguration();
+        cfg.setAllowedOriginPatterns(List.of("http://localhost:5173", "http://localhost:5174"));
+        cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
+        cfg.setAllowedHeaders(List.of("Content-Type","Authorization","X-Requested-With","Accept","Origin"));
+        cfg.setExposedHeaders(List.of("Authorization"));
+        cfg.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cfg);
+        return source;
+    }
 }
