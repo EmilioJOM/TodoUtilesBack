@@ -1,9 +1,10 @@
 package com.uade.tpo.demo.entity;
 
-// OJO: si te marca error en jakarta.persistence,
-// cambiá "jakarta" por "javax" en los imports.
 import jakarta.persistence.*;
 
+/**
+ * Entidad que representa la imagen binaria de un producto en la base de datos.
+ */
 @Entity
 @Table(name = "imagen")
 public class Imagen {
@@ -12,20 +13,29 @@ public class Imagen {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Id del producto al que pertenece la imagen
+    // Columna para asociar la imagen con el producto correspondiente.
     @Column(name = "producto_id", nullable = false)
     private Long productoId;
 
+    // Nombre original del archivo (ej: foto.png).
     private String nombre;
 
+    // Tipo de contenido (ej: image/png).
     @Column(name = "content_type")
     private String contentType;
 
+    // Campo donde se almacenan los bytes binarios de la imagen.
+    // Usamos LONGBLOB para forzar a Hibernate a usar el tipo de datos más grande,
+    // corrigiendo el error de truncamiento de datos.
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGBLOB")
     private byte[] datos;
 
-    // ----- Getters y setters -----
+    // Constructor vacío (necesario para JPA/Hibernate)
+    public Imagen() {
+    }
+
+    // --- Getters y setters ---
 
     public Long getId() {
         return id;
