@@ -3,6 +3,7 @@ package com.uade.tpo.demo.controllers.products;
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.exceptions.CategoryNonexistentException;
 import com.uade.tpo.demo.service.ProductService;
+import com.uade.tpo.demo.service.ImageService; // <-- Importación necesaria para el servicio de imagen
 
 import java.util.List;
 
@@ -16,11 +17,15 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    // Se mantiene la inyección de imagen que venía del 'main'
+    @Autowired
+    private ImageService imageService;
+    
     // Crear producto
     @PostMapping
-    public Product createProduct(@RequestBody ProductRequest request) {
+    public Product createProduct(@RequestBody ProductRequest request) throws CategoryNonexistentException {
         System.out.println("POST: api/productos");
-        return productService.createProduct(request.getDescripcion(), request.getStock(), request.getPrice());
+        return productService.createProduct(request.getDescripcion(), request.getStock(), request.getPrice(),request.getExtraInfo(),request.getCategory());
     }
 
     // Eliminar producto
@@ -51,6 +56,12 @@ public class ProductController {
     public Product changeDescription(@RequestParam long id, @RequestParam String description) {
         System.out.println("POST: api/productos/change-description");
         return productService.changeDescription(id, description);
+    }
+
+    //cambiar info extra
+    @PostMapping("/change-extraInfo")
+    public Product changeExtraInfo(@RequestParam long id, @RequestParam String info){
+        return productService.changeExtraInfo(id, info);
     }
 
     // Agregar stock

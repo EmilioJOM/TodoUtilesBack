@@ -32,14 +32,33 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
-
                 // 1️⃣ AUTH pública (siempre primero)
                 .requestMatchers("/api/v1/auth/**").permitAll()
 
-                // 2️⃣ Recursos estáticos públicos
+                // 2️⃣ Recursos estáticos públicos (Para imágenes subidas)
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/images/**").permitAll()
 
+                // REGLAS DE LA RAMA MAIN
+                // Categorías
+                .requestMatchers(HttpMethod.GET, "/categories", "/categories/*").permitAll()
+                .requestMatchers(HttpMethod.POST, "/categories").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/categories/*").hasAuthority("ADMIN")
+                // Búsquedas
+                .requestMatchers("/searches/**").permitAll()
+                // Carrito
+                .requestMatchers("/carts/**").hasAnyAuthority("USER","ADMIN")
+                // Legacy
+                .requestMatchers("/carrito/**").hasAuthority("ADMIN")
+                // Cupones
+                .requestMatchers(HttpMethod.GET,"/cupones/**").hasAnyAuthority("USER","ADMIN")
+                .requestMatchers("/cupones/**").hasAnyAuthority("ADMIN")
+                // Ventas
+                .requestMatchers(HttpMethod.GET, "/ventas").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/ventas/my").hasAnyAuthority("USER")
+                .requestMatchers(HttpMethod.POST, "/ventas").hasAnyAuthority("USER","ADMIN")
+                
+                // REGLAS TUYAS PARA PRODUCTOS
                 // 3️⃣ Productos públicos (solo GET)
                 .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
 
@@ -48,9 +67,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasAuthority("ADMIN")
 
-                // 5️⃣ Imágenes (permitidas para testear)
+                // 5️⃣ Endpoint de subida de imágenes (Permitido para testear o si el producto lo requiere)
                 .requestMatchers(HttpMethod.POST, "/api/productos/*/imagen").permitAll()
-
+                
                 // 6️⃣ El resto requiere autenticación
                 .anyRequest().authenticated()
             )

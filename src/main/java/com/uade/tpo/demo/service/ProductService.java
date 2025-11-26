@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
     
-    public Product createProduct(String description, int stock, double price);
+    public Product createProduct(String description, int stock, double price, String extraInfo, String category);
 
     public Boolean eraseProduct(Long id);
 
@@ -18,6 +18,8 @@ public interface ProductService {
     public Product deleteProductCategory(long id, String categoryDescription) throws CategoryNonexistentException;
 
     public Product changeDescription(long id, String description);
+
+    public Product changeExtraInfo(long id, String info);
 
     public Product addStock(long id, int stock);
 

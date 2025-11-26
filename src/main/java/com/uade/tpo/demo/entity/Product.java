@@ -23,13 +23,17 @@ public class Product {
     private Long id;
 
     @Column
-    private String description;
+    private String description; //la descripcion actua como nombre
+
+    @Column 
+    private String extraInfo; //esta actua como descripcion
 
     @Column
     private int stock;
 
     @Column
     private double price;
+
 
     @ManyToMany
     @JoinTable(
