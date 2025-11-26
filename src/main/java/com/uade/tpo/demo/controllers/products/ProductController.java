@@ -1,19 +1,14 @@
 package com.uade.tpo.demo.controllers.products;
 
-import com.uade.tpo.demo.entity.Imagen;
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.exceptions.CategoryNonexistentException;
-import com.uade.tpo.demo.service.ImageService;
 import com.uade.tpo.demo.service.ProductService;
+import com.uade.tpo.demo.service.ImageService; // <-- Importación necesaria para el servicio de imagen
 
-import java.awt.*;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 
 @RestController
 @RequestMapping("/api/productos")
@@ -22,6 +17,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    // Se mantiene la inyección de imagen que venía del 'main'
     @Autowired
     private ImageService imageService;
     
@@ -35,7 +31,7 @@ public class ProductController {
     // Eliminar producto
     @DeleteMapping("/{id}")
     public Boolean eraseProduct(@PathVariable Long id) {
-        System.out.println("DELETE: api/productos/"+id.toString());
+        System.out.println("DELETE: api/productos/" + id);
         return productService.eraseProduct(id);
     }
 
@@ -43,7 +39,7 @@ public class ProductController {
     @PostMapping("/add-category")
     public Product addProductCategory(@RequestParam long id, @RequestParam String categoryDescription)
             throws CategoryNonexistentException {
-        System.out.println("DELETE: api/productos/add-category");
+        System.out.println("POST: api/productos/add-category");
         return productService.addProductCategory(id, categoryDescription);
     }
 
@@ -82,7 +78,6 @@ public class ProductController {
         return productService.changePrice(id, price);
     }
 
-    
     // Obtener TODOS los productos
     @GetMapping
     public List<Product> getAllProducts() {
@@ -93,27 +88,7 @@ public class ProductController {
     // Obtener producto
     @GetMapping("/{id}")
     public Product obtainProduct(@PathVariable Long id) {
-        System.out.println("GET: api/productos/"+id.toString());
+        System.out.println("GET: api/productos/" + id);
         return productService.obtainProduct(id);
-    }
-
-//    @PostMapping("/{id}/imagen")
-//    public ResponseEntity<Product> subirImagen(
-//            @PathVariable Long id,
-//            @RequestParam("file") MultipartFile file
-//    ) {
-//        System.out.println("POST: api/productos/" + id + "/imagen");
-//        Product actualizado = productService.subirImagen(id, file);
-//        return ResponseEntity.ok(actualizado);
-//    }
-
-    @PostMapping("/{id}/imagen")
-    public ResponseEntity<String> subirImagen(
-            @PathVariable Long id,
-            @RequestPart("file") MultipartFile file) throws Exception {
-
-        Imagen saved = imageService.create(file);
-        productService.asociarImagen(id, saved.getId()); // implementá esta asociación
-        return ResponseEntity.ok("created:" + saved.getId());
     }
 }
